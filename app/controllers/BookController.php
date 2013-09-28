@@ -9,9 +9,21 @@ class BookController extends \BaseController {
 	 */
 	public function index()
 	{
-		$books = Book::where('user_id', Auth::user()->id)->get();
- 			
- 		if($books) {
+		return $this->byuser(Auth::user()->id);
+	}
+
+	/**
+	 * display a list of books by user
+	 *
+	 * @param int $id 
+	 * @return Response
+	 * @author gaspard
+	 */
+	public function byuser($id)
+	{
+		$books = Book::where('user_id', $id)->get();
+			
+		if($books) {
 			return Response::json(
 				array(
 					'error' => false,
