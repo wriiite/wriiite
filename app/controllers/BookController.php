@@ -44,26 +44,38 @@ class BookController extends \BaseController {
 			curl -i --user gaspard:gaspard -d 'title=A title&description=A description' http://wriiite.site:8080/api/v1/book
 		*/
 
-		$book = new Book;
-		$book->title = Request::get('title');
-		$book->slug = uniqid();
-		$book->description = Request::get('description');
-		$book->user_id = Auth::user()->id;
-		$book->status = false;
+
+		$rules = array(
+		        'title' => 'required',
+		        'description' => 'required'
+		    );
 
 
-		// Validation and Filtering is sorely needed!!
-		// Seriously, I'm a bad person for leaving that out.
+		$validator = Validator::make(Input::all(), $rules);
 
-		$book->save();
+		if ($validator->fails())
+		{
+		   // Error pending...418 ?
+		}
 
-		return Response::json(
-			array(
-				'error' => false,
-				'book' => $book->toArray()
-			),
-			200
-		);
+		else 
+		{
+			$book = new Book;
+			$book->title = Request::get('title');
+			$book->slug = uniqid();
+			$book->description = Request::get('description');
+			$book->user_id = Auth::user()->id;
+			$book->status = false;
+			$book->save();
+
+			return Response::json(
+				array(
+					'error' => false,
+					'book' => $book->toArray()
+				),
+				200
+			);
+		}
 
 	}
 
@@ -75,17 +87,30 @@ class BookController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$book = Book::where('id', $id)
-			->take(1)
-			->get();
 
-		return Response::json(
-			array(
-				'error' => false,
-				'book' => $book->toArray()
-			),
-			200
-		);
+		$book = Book::where('id','=', $id)
+			->first();
+
+		if($book)
+		{
+			return Response::json(
+				array(
+					'error' => false,
+					'book' => $book->toArray()
+				),
+				200
+			);
+		}
+		else 
+		{
+			return Response::json(
+				array(
+					'error' => true,
+					'message' => 'Book not found'
+				),
+				400
+			);
+		}
 	}
 
 	/**
@@ -111,16 +136,16 @@ class BookController extends \BaseController {
 		$book = Book::where('user_id', Auth::user()->id)->find($id);
 
 		if ( Request::get('title') ) {
-			$url->url = Request::get('title');
+			$book->title = Request::get('title');
 			$modified['title'] = Request::get('title');
 		}
 
 		if ( Request::get('description') ) {
-			$url->description = Request::get('description');
+			$book->description = Request::get('description');
 			$modified['description'] = Request::get('description');
 		}
 
-		$url->save();
+		$book->save();
 
 		return Response::json(
 			array(
