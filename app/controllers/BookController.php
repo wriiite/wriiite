@@ -240,8 +240,8 @@ class BookController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' => true,
-					'message' => 'Book doesn\'t exist'
+					'error' 	=> true,
+					'message' 	=> 'Book doesn\'t exist'
 				),
 				404
 			);
