@@ -1,16 +1,17 @@
-wriiite
+![Site logo](http://www.wriiite.com/img/logo.png)
 =======
-
-[![Site logo](http://www.wriiite.com/img/logo.png)]
 
 A collaborative wriiiting tool.
 
+v0.1
 
 
 
-## API Documentation
+### API Documentation
 
-There should be a RESTful API.
+A RESTful API will be available at /api/v1.
+
+
 
 ### License
 
