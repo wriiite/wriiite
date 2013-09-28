@@ -11,7 +11,8 @@ class ApiTest extends TestCase {
 	public function testApiAlive()
 	{
 		$response = $this->call('GET', '/api/v1');
-		$this->assertEquals('API v1 is alive', $response->getContent());
+		$this->assertTrue($response->isOk());
+		$this->assertEquals('API v1 is alive', json_decode($response->getContent())->message );
 	}
 
 	/**
@@ -36,6 +37,9 @@ class ApiTest extends TestCase {
 	 */
 	public function testApiBookRead()
 	{
+		$user = new User(array('id'=>1));
+		$this->be($user);
+
 		$response = $this->call('GET', '/api/v1/book');
 		$j = json_decode($response->getContent());
 
@@ -91,6 +95,25 @@ class ApiTest extends TestCase {
 		$this->assertEquals('My New book title', $j->book->title);
 		$this->assertEquals('This is my new book, you should enjoy it', $j->book->description);
 
+		// insert fail no description
+		$response = $this->call('POST', '/api/v1/book', 
+			array('title' => 'My failing book title')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+
+		// insert fail no title
+		$response = $this->call('POST', '/api/v1/book', 
+			array('description' => 'My failing book is about a book that fails, because some title is missing')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+
+		// insert fail decription too short
+		$response = $this->call('POST', '/api/v1/book', 
+			array('title' => 'My short book', 'description' => 'This is too short')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+
+
 		// update
 		$response = $this->call('PUT', '/api/v1/book/'.$id, ['title'=> 'My New book title, updated']);
 		$this->assertTrue($response->getStatusCode() == 200);
@@ -144,8 +167,10 @@ class ApiTest extends TestCase {
 
 		// insert a new book
 		$response = $this->call('POST', '/api/v1/book', 
-			array('title' => 'The survival book', 'description' => 'This book will not be deleted')
+			array('title' => 'The survival book', 'description' => 'This book will not be deleted because of controller restrictions')
 		);
+
+
 		$this->assertTrue($response->getStatusCode() == 201);
 		$j = json_decode($response->getContent());
 		$id2 = $j->book->id;

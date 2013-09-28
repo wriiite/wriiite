@@ -22,5 +22,9 @@ Route::get('/authtest', array('before' => 'auth.basic', function() {
 
 // Route group for API
 Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
+	Route::get('/',function() {
+		return Response::json(["message"=>"API v1 is alive"]);
+	});
+
 	Route::resource('book', 'BookController');
 });
