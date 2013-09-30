@@ -194,4 +194,19 @@ class ApiTest extends TestCase {
 
 	}
 
+	/**
+	 * Test API Book By User
+	 *
+	 * @author gaspard
+	 */
+	public function testApiBookByUser()
+	{
+		$response = $this->call('GET', '/api/v1/user/1/book');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(1, $j->books[0]->id);
+		$this->assertEquals('first-book', $j->books[0]->slug);
+		$this->assertEquals('First Book', $j->books[0]->title);
+		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->books[0]->description);
+	}
 }
