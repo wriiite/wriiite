@@ -51,15 +51,16 @@ class PageController extends \BaseController {
 	 */
 	public function store()
 	{
+
 		$rules = array(
-		        'content' 		=> 'required|between:300,350',
+		        'content' 		=> 'required',
 		        'book_id' 		=> 'required|exists:books,id'
 		    );
 
 
 		$validator = Validator::make(Input::all(), $rules);
 
-		if ($validator->fails()) {
+		if ($validator->fails()){
 		   return Response::json(
 				array(
 					'error' 	=> true,
@@ -68,31 +69,29 @@ class PageController extends \BaseController {
 				404
 			);
 		}
+		else{
 
-		else {
+			$parent 			= Page::where('book_id',$book_id)->where('status',1)->orderBy('created_at', 'desc')->first();
 
-			$parent 			= Page::where('book_id',$book_id)->orderBy('created_at', 'desc')->where('status',1)->first();
-			$status				= 0; //Define the status of the created page
-
-			if(!$parent){
-
+			if($parent){
+				$parent_id 		= $parent->id;
+				$parent_number	= $parent->number;
+				$status			= 0; //Define the status of the created page
+			}
+			else{
 				//If it's the first page of the book
-
-				$parent 		= new Page;
-				$parent->id 	= 0;
-				$parent->number = 0; 
+				$parent_id 		= 0;
+				$parent_number	= 0;
 				$status 		= 1; //if there's no parent page, the new page is the first - auto validated - page of the book.
 			}
 
 			$page 				= new Page;
 			$page->content 		= Request::get('content');
 			$page->book_id 		= Request::get('book_id');
-			$page->parent_id	= $parent->id;
-			$page->number 		= $parent->number + 1;
+			$page->parent_id	= $parent_id;
+			$page->number 		= $parent_number++;
 			$page->user_id		= Auth::user()->id;
 			$page->status 		= $status;
-
-
 
 			$page->save();
 
@@ -116,7 +115,7 @@ class PageController extends \BaseController {
 	{
 		$page = Page::where('id','=', $id)->first();
 
-		if($page) {
+		if($page){
 			return Response::json(
 				array(
 					'error' => false,
@@ -157,7 +156,7 @@ class PageController extends \BaseController {
 	{
 		$page = Page::where('id', $id)->where('status', 0)->first();
 
-		if($page) {
+		if($page){
 
 			if($page->book->user_id == Auth::user()->id) {
 
