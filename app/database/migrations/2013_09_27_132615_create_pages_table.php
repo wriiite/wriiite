@@ -17,6 +17,7 @@ class CreatePagesTable extends Migration {
 			$table->increments('id');
 			$table->integer('user_id');
 			$table->integer('book_id');
+			$table->integer('parent_id');
 			$table->smallInteger('number');
 			$table->text('content');
 			$table->boolean('status');
