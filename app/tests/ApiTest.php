@@ -209,4 +209,36 @@ class ApiTest extends TestCase {
 		$this->assertEquals('First Book', $j->books[0]->title);
 		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->books[0]->description);
 	}
+
+	/**
+	 * Test API User Read
+	 *
+	 * @author gaspard
+	 */
+	public function testApiUserRead()
+	{
+		$response = $this->call('GET', '/api/v1/user');
+		$j = json_decode($response->getContent());
+		$this->assertEquals(1, $j->users[0]->id);
+		$this->assertEquals('firstuser', $j->users[0]->username);
+		$this->assertTrue(isset($j->users[0]->username));
+		$this->assertFalse(isset($j->users[0]->email));
+		$this->assertFalse(isset($j->users[0]->password));
+
+		// first user
+		$response = $this->call('GET', '/api/v1/user/1');
+		$j = json_decode($response->getContent());
+		$this->assertEquals(1, $j->user->id);
+		$this->assertEquals('firstuser', $j->user->username);
+		$this->assertTrue(isset($j->user->username));
+		$this->assertFalse(isset($j->user->email));
+		$this->assertFalse(isset($j->user->password));
+
+		// second user
+		$response = $this->call('GET', '/api/v1/user/2');
+		$j = json_decode($response->getContent());
+		$this->assertEquals(2, $j->user->id);
+		$this->assertEquals('seconduser', $j->user->username);
+
+	}
 }
