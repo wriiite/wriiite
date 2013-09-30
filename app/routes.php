@@ -27,6 +27,9 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
 	});
 
 	Route::resource('book', 'BookController');
+
 	Route::resource('user', 'UserController');
 	Route::get('user/{id}/book', 'BookController@byuser');
+
+	Route::resource('page', 'PageController');
 });

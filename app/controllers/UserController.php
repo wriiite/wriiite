@@ -75,7 +75,7 @@ class UserController extends \BaseController {
 			return Response::json(
 				array(
 					'error' 	=> true,
-					'message' 	=> 'Book not found'
+					'message' 	=> 'User not found'
 				),
 				404
 			);
