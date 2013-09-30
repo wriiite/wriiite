@@ -26,7 +26,6 @@ class ApiTest extends TestCase {
 		
 //		Route::enableFilters();
 //		$crawler = $this->client->request('GET', '/api/v1/book');
-
 //		$this->assertTrue($this->client->getResponse()->isOk());
 	}
 	/**
@@ -37,8 +36,6 @@ class ApiTest extends TestCase {
 	 */
 	public function testApiBookRead()
 	{
-		$user = new User(array('id'=>1));
-		$this->be($user);
 
 		$response = $this->call('GET', '/api/v1/book');
 		$j = json_decode($response->getContent());
@@ -47,6 +44,19 @@ class ApiTest extends TestCase {
 		$this->assertEquals('first-book', $j->books[0]->slug);
 		$this->assertEquals('First Book', $j->books[0]->title);
 		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->books[0]->description);
+
+
+		$response = $this->call('GET', '/api/v1/book?page=2');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(3, $j->books[0]->id);
+		$this->assertEquals('dramatis-personae', $j->books[0]->slug);
+		$this->assertEquals('Dramatis Personae', $j->books[0]->title);
+
+		$response = $this->call('GET', '/api/v1/book?page=99');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(0, count($j->books));
 
 		$response = $this->call('GET', '/api/v1/book/1');
 		$j = json_decode($response->getContent());
