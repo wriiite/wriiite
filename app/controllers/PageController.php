@@ -60,7 +60,8 @@ class PageController extends \BaseController {
 
 		$validator = Validator::make(Input::all(), $rules);
 
-		if ($validator->fails()){
+		if($validator->fails()) {
+
 		   return Response::json(
 				array(
 					'error' 	=> true,
@@ -69,8 +70,10 @@ class PageController extends \BaseController {
 				404
 			);
 		}
-		else{
+		else {
 
+			$book_id 			= Request::get('book_id');
+			$content			= Request::get('content');
 			$parent 			= Page::where('book_id',$book_id)->where('status',1)->orderBy('created_at', 'desc')->first();
 
 			if($parent){
@@ -86,10 +89,10 @@ class PageController extends \BaseController {
 			}
 
 			$page 				= new Page;
-			$page->content 		= Request::get('content');
-			$page->book_id 		= Request::get('book_id');
+			$page->content 		= $content;
+			$page->book_id 		= $book_id;
 			$page->parent_id	= $parent_id;
-			$page->number 		= $parent_number++;
+			$page->number 		= $parent_number + 1;
 			$page->user_id		= Auth::user()->id;
 			$page->status 		= $status;
 
