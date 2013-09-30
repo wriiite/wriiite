@@ -9,9 +9,9 @@ class BookController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page = Input::get('page',1);
-		$item_perPage = 2;
-		$books = Book::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+		$page 			= Input::get('page',1);
+		$item_perPage 	= 2;
+		$books 			= Book::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
 			
 		if($books) {
 			return Response::json(

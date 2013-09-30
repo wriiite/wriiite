@@ -9,13 +9,16 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		$users = User::all();
- 			
- 		if($users) {
+		$page 			= Input::get('page',1);
+		$item_perPage 	= 2;
+		$users 			= User::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+			
+		if($users) {
 			return Response::json(
 				array(
 					'error' => false,
-					'users' => $users->toArray()
+					'users' => $users->toArray(),
+					'page'  => $page 
 				),
 				200
 			);
@@ -24,7 +27,7 @@ class UserController extends \BaseController {
 			return Response::json(
 				array(
 					'error' 	=> true,
-					'message' 	=> 'There is no user yet'
+					'message' 	=> 'There\'s no users here'
 				),
 				404
 			);
