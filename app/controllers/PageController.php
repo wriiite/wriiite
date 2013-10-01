@@ -9,16 +9,17 @@ class PageController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page 			= Input::get('page',1);
+		$page			= Input::get('p',1);
 		$item_perPage 	= 4;
 		$pages 			= Page::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
 			
-		if($pages) {
+		if($pages && count($pages) > 0) {
+
 			return Response::json(
 				array(
 					'error' => false,
 					'pages' => $pages->toArray(),
-					'page'  => $page 
+					'p'  	=> $page
 				),
 				200
 			);
