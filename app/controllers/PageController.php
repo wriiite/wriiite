@@ -151,10 +151,34 @@ class PageController extends \BaseController {
 		$page = Page::where('id','=', $id)->first();
 
 		if($page){
+
+			$altPages 	= Page::where('book_id',$page->book_id)->where('number',$page->number)->where('id', '!=', $page->id)->get();
+
+			if($altPages) {
+				$altPagesArray 	= [];
+				foreach($altPages as $a) {
+					$altPagesArray[]['id']		= $a->id;
+					$altPagesArray[]['s']		= $a->status;
+					$altPagesArray[]['user']	= array('id'=>$a->user->id,'username'=>$a->user->username);
+				}
+			}
+			else {
+				$altPagesArray 		= [];
+			}
+
 			return Response::json(
 				array(
-					'error' => false,
-					'page' => $page->toArray()
+					'error' 		=> false,
+					'id'			=> $page->id,
+					'user'			=> array('id'=>$page->user->id,'username'=>$page->user->username),
+					'parent_id'		=> $page->parent_id,
+					'book_id'		=> $page->book_id,
+					'number'		=> $page->number,
+					'status'		=> $page->status,
+					'content'		=> $page->content,
+					'alt'			=> $altPagesArray,
+					'created_at'	=> $page->created_at,
+					'updated_at'	=> $page->updated_at
 				),
 				200
 			);
