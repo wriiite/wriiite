@@ -158,6 +158,8 @@ class BookController extends \BaseController {
 					'title'			=> $book->title,
 					'slug'			=> $book->slug,
 					'description' 	=> $book->description,
+					'created_at'	=> $book->created_at,
+					'modified_at'	=> $book->modified_at,
 					'user'			=> array('id'=>$book->user->id,'username'=>$book->user->username),
 					'pages'			=> $pageArray
 				),
