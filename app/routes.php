@@ -27,10 +27,11 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
 	});
 
 	Route::resource('book', 'BookController');
+	Route::get('user/{id}/book', 'BookController@ownedByUser');
 
 	Route::resource('user', 'UserController');
-	Route::get('user/{id}/book', 'BookController@ownedByUser');
-	Route::get('user/{id}/page', 'PageController@ownedByUser');
+	Route::get('book/{id}/user', 'UserController@bookContributors');
 
 	Route::resource('page', 'PageController');
+	Route::get('user/{id}/page', 'PageController@ownedByUser');
 });

@@ -60,6 +60,55 @@ class UserController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
+	public function bookContributors($id)
+	{
+		$book = Book::where('id',$id)->first();
+
+		if($book) {
+
+			if(Input::get('sort') && Input::get('sort') == 'valid') {
+				$pages 		= Page::where('book_id', $book->id)->where('status',1)->get();
+			}
+			else {
+				$pages 		= Page::where('book_id', $book->id)->get();
+			}
+
+			$users_id 	= [];
+
+			foreach($pages as $p)
+			{
+				$users_id[] = $p->user_id;
+			}
+
+			$users = User::whereIn('id', $users_id)->get();
+			
+			return Response::json(
+				array(
+					'error' => false,
+					'users' => $users->toArray()
+				),
+				200
+			);
+
+			
+		}
+		else {
+			return Response::json(
+				array(
+					'error' 	=> true,
+					'message' 	=> 'This book doesn\'t exist'
+				),
+				404
+			);
+		}
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
 	public function show($id)
 	{
 
