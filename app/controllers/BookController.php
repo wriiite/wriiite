@@ -41,7 +41,7 @@ class BookController extends \BaseController {
 	 * @return Response
 	 * @author gaspard
 	 */
-	public function byuser($id)
+	public function ownedByUser($id)
 	{
 		$books = Book::where('user_id', $id)->get();
 			
