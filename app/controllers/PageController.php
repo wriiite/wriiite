@@ -54,16 +54,15 @@ class PageController extends \BaseController {
 	{
 
 		$rules = array(
-		        'content' 		=> 'required',
-		        'book_id' 		=> 'required|exists:books,id'
-		    );
-
+			'content' 		=> 'required',
+			'book_id' 		=> 'required|exists:books,id'
+		);
 
 		$validator = Validator::make(Input::all(), $rules);
 
 		if($validator->fails()) {
 
-		   return Response::json(
+			return Response::json(
 				array(
 					'error' 	=> true,
 					'message' 	=> 'The page creation failed'
@@ -158,9 +157,11 @@ class PageController extends \BaseController {
 			if($altPages) {
 				$altPagesArray 	= [];
 				foreach($altPages as $a) {
-					$altPagesArray[]['id']		= $a->id;
-					$altPagesArray[]['s']		= $a->status;
-					$altPagesArray[]['user']	= array('id'=>$a->user->id,'username'=>$a->user->username);
+					$altPagesArray[] = array(
+						'id'	=> $a->id,
+						's'		=> $a->status,
+						'user'	=> array('id'=>$a->user->id,'username'=>$a->user->username)
+					);
 				}
 			}
 			else {
