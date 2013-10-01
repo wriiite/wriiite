@@ -108,6 +108,38 @@ class PageController extends \BaseController {
 		}
 	}
 
+
+	/**
+	 * display a list of pages by user
+	 *
+	 * @param int $id 
+	 * @return Response
+	 * @author gaspard
+	 */
+	public function ownedByUser($id)
+	{
+		$pages = Page::where('user_id', $id)->get();
+			
+		if(!empty($pages)) {
+			return Response::json(
+				array(
+					'error' => false,
+					'pages' => $pages->toArray()
+				),
+				200
+			);
+		}
+		else {
+			return Response::json(
+				array(
+					'error' 	=> true,
+					'message' 	=> 'This user has no pages yet'
+				),
+				404
+			);
+		}
+	}
+
 	/**
 	 * Display the specified resource.
 	 *

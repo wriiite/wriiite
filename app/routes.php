@@ -30,7 +30,7 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
 
 	Route::resource('user', 'UserController');
 	Route::get('user/{id}/book', 'BookController@ownedByUser');
-	Route::get('user/{id}/page', 'PageController@byuser');
+	Route::get('user/{id}/page', 'PageController@ownedByUser');
 
 	Route::resource('page', 'PageController');
 });
