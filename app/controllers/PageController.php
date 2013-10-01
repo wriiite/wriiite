@@ -9,9 +9,9 @@ class PageController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page			= Input::get('p',1);
+		$pagination		= Input::get('p',1);
 		$item_perPage 	= 4;
-		$pages 			= Page::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+		$pages 			= Page::orderBy('created_at', 'desc')->forPage($pagination,$item_perPage)->get();
 			
 		if($pages && count($pages) > 0) {
 
@@ -19,7 +19,7 @@ class PageController extends \BaseController {
 				array(
 					'error' => false,
 					'pages' => $pages->toArray(),
-					'p'  	=> $page
+					'p'  	=> $pagination
 				),
 				200
 			);
