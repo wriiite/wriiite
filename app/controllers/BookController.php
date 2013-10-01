@@ -140,10 +140,26 @@ class BookController extends \BaseController {
 		$book = Book::where('id','=', $id)->first();
 
 		if($book) {
+
+			$pages		= Page::where('book_id',$book->id)->get();
+			$pageArray 	= [];
+
+			foreach($pages as $p)
+			{
+				$pageArray[]['id']		= $p->id;
+				$pageArray[]['s']		= $p->status;
+				$pageArray[]['n']		= $p->number;
+				$pageArray[]['users']	= array('username'=>$p->user->username,'id'=>$p->user->id); 
+			}
+
 			return Response::json(
 				array(
-					'error' => false,
-					'book' => $book->toArray()
+					'error' 		=> false,
+					'title'			=> $book->title,
+					'slug'			=> $book->slug,
+					'description' 	=> $book->description,
+					'user'			=> array('id'=>$book->user->id,'username'=>$book->user->username),
+					'pages'			=> $pageArray
 				),
 				200
 			);
