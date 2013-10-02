@@ -221,16 +221,32 @@ class PageController extends \BaseController {
 
 			if($page->book->user_id == Auth::user()->id) {
 
-				$page->status = 1;
-				$page->save();
+				$validPage = Page::where('book_id',$page->book_id)->where('number',$page->number)->where('status',1)->get();
 
-				return Response::json(
-					array(
-						'error' => false,
-						'page' 	=> $page->toArray()
-					),
-					200
-				);
+				//Here, we check if there's already a validated page for this page number. If so : 404
+
+				if(count($validPage) > 0) {
+					return Response::json(
+						array(
+							'error' 	=> true,
+							'message' 	=> 'There\'s already a validated page for this page number'
+						),
+						404
+					);
+				}
+				else {
+					$page->status = 1;
+					$page->save();
+
+					return Response::json(
+						array(
+							'error' => false,
+							'page' 	=> $page->toArray()
+						),
+						200
+					);
+				}
+				
 			}
 			else {
 				return Response::json(
@@ -248,7 +264,7 @@ class PageController extends \BaseController {
 			return Response::json(
 				array(
 					'error' 	=> true,
-					'message' 	=> 'Page not found'
+					'message' 	=> 'Page not found or already validated'
 				),
 				404
 			);
