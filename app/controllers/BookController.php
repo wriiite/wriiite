@@ -109,21 +109,37 @@ class BookController extends \BaseController {
 		}
 
 		else {
-			$book 				= new Book;
-			$book->title 		= Request::get('title');
-			$book->slug 		= Str::slug($book->title);
-			$book->description 	= Request::get('description');
-			$book->user_id 		= Auth::user()->id;
-			$book->status 		= false;
-			$book->save();
 
-			return Response::json(
-				array(
-					'error' => false,
-					'book' 	=> $book->toArray()
-				),
-				201
-			);
+			$slug			= Str::slug(Request::get('title'));
+			$existSlug		= Book::where('slug',$slug)->get();
+
+			if(count($existSlug) > 0) {
+				return Response::json(
+					array(
+						'error' 	=> true,
+						'message' 	=> 'This title is already taken'
+					),
+					404
+				);
+			}
+			else {
+				$book 				= new Book;
+				$book->title 		= Request::get('title')
+				$book->slug 		= $slug;
+				$book->description 	= Request::get('description');
+				$book->user_id 		= Auth::user()->id;
+				$book->status 		= false;
+				$book->save();
+
+				return Response::json(
+					array(
+						'error' => false,
+						'book' 	=> $book->toArray()
+					),
+					201
+				);
+			}
+			
 		}
 
 	}
