@@ -9,16 +9,16 @@ class BookController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page 			= Input::get('page',1);
+		$pagination 			= Input::get('page',1);
 		$item_perPage 	= 2;
-		$books 			= Book::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+		$books 			= Book::orderBy('created_at', 'desc')->forPage($pagination,$item_perPage)->get();
 			
 		if($books) {
 			return Response::json(
 				array(
-					'error' => false,
-					'books' => $books->toArray(),
-					'page'  => $page 
+					'error' 	=> false,
+					'books' 	=> $books->toArray(),
+					'pagination'  => $pagination 
 				),
 				200
 			);
