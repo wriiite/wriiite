@@ -111,7 +111,7 @@ class BookController extends \BaseController {
 		else {
 			$book 				= new Book;
 			$book->title 		= Request::get('title');
-			$book->slug 		= uniqid();
+			$book->slug 		= Str::slug($book->title);
 			$book->description 	= Request::get('description');
 			$book->user_id 		= Auth::user()->id;
 			$book->status 		= false;
@@ -214,6 +214,8 @@ class BookController extends \BaseController {
 				else {
 					$book->title 		= Request::get('title');
 					$modified['title'] 	= Request::get('title');
+					$book->slug 		= Str::slug($book->title);
+					$modified['sug'] 	= $book->slug;
 				}
 				
 			}
