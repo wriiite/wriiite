@@ -204,22 +204,6 @@ class BookController extends \BaseController {
 
 		if($book) {
 
-			if ( Request::get('title') ) {
-
-				$validator = Validator::make(Input::all(), array('title' => 'required|min:3'));
-				if($validator->fails()) {
-					$errors['title'] = true;
-				}
-
-				else {
-					$book->title 		= Request::get('title');
-					$modified['title'] 	= Request::get('title');
-					$book->slug 		= Str::slug($book->title);
-					$modified['sug'] 	= $book->slug;
-				}
-				
-			}
-
 			if ( Request::get('description') ) {
 
 				$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
@@ -234,12 +218,12 @@ class BookController extends \BaseController {
 
 			// If validation doesn't pass
 
-			if(isset($errors['description']) OR isset($errors['title'])) {
+			if(isset($errors['description'])) {
 
 				return Response::json(
 					array(
 						'error' 	=> true,
-						'message' 	=> 'The title and/or the description isn\'t long enough'
+						'message' 	=> 'The description isn\'t long enough'
 					),
 					204
 				);
