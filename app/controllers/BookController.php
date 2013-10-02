@@ -146,10 +146,12 @@ class BookController extends \BaseController {
 
 			foreach($pages as $p)
 			{
-				$pageArray[]['id']		= $p->id;
-				$pageArray[]['s']		= $p->status;
-				$pageArray[]['n']		= $p->number;
-				$pageArray[]['users']	= array('username'=>$p->user->username,'id'=>$p->user->id); 
+				$pageArray[]		= array(
+					'id'			=> $p->id,
+					's'				=> $p->status,
+					'n'				=> $p->number,
+					'user'			=> array('username'=>$p->user->username,'id'=>$p->user->id)
+					);
 			}
 
 			return Response::json(
