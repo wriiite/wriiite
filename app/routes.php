@@ -22,6 +22,12 @@ Route::get('/authtest', array('before' => 'auth.basic', function() {
 
 // Route group for API
 Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
+
+	// should be set somewhere else
+	header('Access-Control-Allow-Headers: X-Requested-With, X-HTTP-Method-Override, Content-Type, Accep');
+	header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
+	header('Access-Control-Allow-Origin: *');
+
 	Route::get('/',function() {
 		return Response::json(["message"=>"API v1 is alive"]);
 	});
