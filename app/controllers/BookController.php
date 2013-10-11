@@ -166,6 +166,7 @@ class BookController extends \BaseController {
 					'id'			=> $p->id,
 					's'				=> $p->status,
 					'n'				=> $p->number,
+					'content'		=> $p->content,
 					'user'			=> array('username'=>$p->user->username,'id'=>$p->user->id)
 					);
 			}
