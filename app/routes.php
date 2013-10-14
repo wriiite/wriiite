@@ -26,12 +26,12 @@ Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
 		return Response::json(["message"=>"API v1 is alive"]);
 	});
 
-	Route::resource('book', 'BookController');
-	Route::get('user/{id}/book', 'BookController@ownedByUser');
+	Route::resource('books', 'BookController');
+	Route::get('users/{id}/books', 'BookController@ownedByUser');
 
-	Route::resource('user', 'UserController');
-	Route::get('book/{id}/user', 'UserController@bookContributors');
+	Route::resource('users', 'UserController');
+	Route::get('books/{id}/users', 'UserController@bookContributors');
 
-	Route::resource('page', 'PageController');
-	Route::get('user/{id}/page', 'PageController@ownedByUser');
+	Route::resource('pages', 'PageController');
+	Route::get('users/{id}/pages', 'PageController@ownedByUser');
 });
