@@ -2,6 +2,8 @@
 
 class UserController extends \BaseController {
 
+	
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -9,25 +11,29 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page 			= Input::get('page',1);
-		$item_perPage 	= 2;
-		$users 			= User::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$users 			= User::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
 			
 		if($users) {
 			return Response::json(
 				array(
-					'error' => false,
-					'users' => $users->toArray(),
-					'page'  => $page 
-				),
+					'items' 	=> $users->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'There\'s no users here'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
@@ -62,6 +68,8 @@ class UserController extends \BaseController {
 	 */
 	public function bookContributors($id)
 	{
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
 		$book = Book::where('id',$id)->first();
 
 		if($book) {
@@ -80,13 +88,17 @@ class UserController extends \BaseController {
 				$users_id[] = $p->user_id;
 			}
 
-			$users = User::whereIn('id', $users_id)->get();
+			$users = User::whereIn('id', $users_id)->take($max)->skip($offset)->get();
 			
 			return Response::json(
 				array(
-					'error' => false,
-					'users' => $users->toArray()
-				),
+					'items' 	=> $users->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 
@@ -95,8 +107,9 @@ class UserController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'This book doesn\'t exist'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
