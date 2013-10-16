@@ -2,7 +2,11 @@
 
 class UserController extends \BaseController {
 
-	
+	public function __construct() {
+
+        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'store','ownedByUser')));
+
+    }
 
 	/**
 	 * Display a listing of the resource.

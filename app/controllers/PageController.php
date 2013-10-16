@@ -2,7 +2,11 @@
 
 class PageController extends \BaseController {
 	
-	
+	public function __construct() {
+
+        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
+
+    }
 	
 	/**
 	 * Display a listing of the resource.
