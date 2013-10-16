@@ -3,7 +3,9 @@
 class BookController extends \BaseController {
 	
 
-	
+	public function __construct() {
+        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -32,8 +34,9 @@ class BookController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'There\'s no books here'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);

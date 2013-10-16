@@ -1,7 +1,9 @@
 <?php
 
 class PageController extends \BaseController {
-
+	
+	
+	
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -9,26 +11,29 @@ class PageController extends \BaseController {
 	 */
 	public function index()
 	{
-		$pagination		= Input::get('p',1);
-		$item_perPage 	= 4;
-		$pages 			= Page::orderBy('created_at', 'desc')->forPage($pagination,$item_perPage)->get();
+		$max 		= intval(Input::get('max',10));
+		$offset 	= intval(Input::get('offset',0));
+		$pages 		= Page::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
 			
 		if($pages && count($pages) > 0) {
-
 			return Response::json(
 				array(
-					'error' => false,
-					'pages' => $pages->toArray(),
-					'p'  	=> $pagination
-				),
+					'items' 	=> $pages->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'There\'s no pages here'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
@@ -118,22 +123,30 @@ class PageController extends \BaseController {
 	 */
 	public function ownedByUser($id)
 	{
-		$pages = Page::where('user_id', $id)->get();
+		$max 		= intval(Input::get('max',10));
+		$offset 	= intval(Input::get('offset',0));
+		$pages 		= Page::orderBy('created_at', 'desc')->where('user_id', $id)->take($max)->skip($offset)->get();
+
 			
-		if(!empty($pages)) {
+		if($pages && count($pages) > 0) {
 			return Response::json(
 				array(
-					'error' => false,
-					'pages' => $pages->toArray()
-				),
+					'items' 	=> $pages->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'This user has no pages yet'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
