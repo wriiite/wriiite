@@ -3,6 +3,9 @@ Books !
 
 <ul>
 <% _.each(books, function(book){ %>
-	<li><a href="books/<%= book.id %>"><%= book.title %></a></li>
+	<li>
+		<a href="/#/books/<%= book.id %>"><%= book.title %></a>
+		<a href="/#/books/<%= book.id %>/edit">edit</a>
+	</li>
 <% }); %>
 </ul>
