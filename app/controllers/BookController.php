@@ -1,6 +1,11 @@
 <?php
 
 class BookController extends \BaseController {
+	
+
+	public function __construct() {
+        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -9,25 +14,29 @@ class BookController extends \BaseController {
 	 */
 	public function index()
 	{
-		$pagination 	= Input::get('p',1);
-		$item_perPage 	= 2;
-		$books 			= Book::orderBy('created_at', 'desc')->forPage($pagination,$item_perPage)->get();
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$books 	= Book::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
 			
 		if($books) {
 			return Response::json(
 				array(
-					'error' 		=> false,
-					'books' 		=> $books->toArray(),
-					'pagination'  	=> $pagination 
-				),
+					'items' 	=> $books->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'There\'s no books here'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
@@ -43,22 +52,29 @@ class BookController extends \BaseController {
 	 */
 	public function ownedByUser($id)
 	{
-		$books = Book::where('user_id', $id)->get();
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$books 	= Book::orderBy('created_at', 'desc')->where('user_id', $id)->take($max)->skip($offset)->get();
 			
-		if($books) {
+		if($books && count($books) > 0) {
 			return Response::json(
 				array(
-					'error' => false,
-					'books' => $books->toArray()
-				),
+					'items' 	=> $books->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'This user has no books yet'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);

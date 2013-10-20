@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -21,9 +20,10 @@ Route::get('/authtest', array('before' => 'auth.basic', function() {
 
 
 // Route group for API
-Route::group(array('prefix' => 'api/v1', 'before' => 'auth.basic'), function() {
+header('Access-Control-Allow-Origin: *');
+Route::group(array('prefix' => 'api/v1'), function() {
 	Route::get('/',function() {
-		return Response::json(["message"=>"API v1 is alive"]);
+		return Response::json(["message"=>"API v0.2 is alive"]);
 	});
 
 	Route::resource('books', 'BookController');

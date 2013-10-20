@@ -2,6 +2,12 @@
 
 class UserController extends \BaseController {
 
+	public function __construct() {
+
+        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'store','bookContributors')));
+
+    }
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -9,25 +15,29 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		$page 			= Input::get('page',1);
-		$item_perPage 	= 2;
-		$users 			= User::orderBy('created_at', 'desc')->forPage($page,$item_perPage)->get();
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$users 			= User::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
 			
 		if($users) {
 			return Response::json(
 				array(
-					'error' => false,
-					'users' => $users->toArray(),
-					'page'  => $page 
-				),
+					'items' 	=> $users->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'There\'s no users here'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
@@ -62,16 +72,13 @@ class UserController extends \BaseController {
 	 */
 	public function bookContributors($id)
 	{
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
 		$book = Book::where('id',$id)->first();
 
 		if($book) {
 
-			if(Input::get('sort') && Input::get('sort') == 'valid') {
-				$pages 		= Page::where('book_id', $book->id)->where('status',1)->get();
-			}
-			else {
-				$pages 		= Page::where('book_id', $book->id)->get();
-			}
+			$pages 		= Page::where('book_id', $book->id)->get();
 
 			$users_id 	= [];
 
@@ -80,13 +87,28 @@ class UserController extends \BaseController {
 				$users_id[] = $p->user_id;
 			}
 
-			$users = User::whereIn('id', $users_id)->get();
+			$users = User::whereIn('id', $users_id)->take($max)->skip($offset)->get();
 			
+			foreach ($users as $u) {
+				$u->validAuthor = false;
+				$userPages 		= Page::where('book_id', $book->id)->where('user_id', $u->id)->get();
+				foreach ($userPages as $up) {
+					if($up->status == 1)
+					{
+						$u->validAuthor = true;
+					}
+				}
+			}
+
 			return Response::json(
 				array(
-					'error' => false,
-					'users' => $users->toArray()
-				),
+					'items' 	=> $users->toArray(),
+					'metadata'	=> array(
+						'max'		=> $max,
+						'offset'	=> $offset,
+						'error'		=> false
+						)
+					),
 				200
 			);
 
@@ -95,8 +117,9 @@ class UserController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'This book doesn\'t exist'
+					'metadata'	=> array(
+						'error' 	=> true
+						)
 				),
 				404
 			);
@@ -117,8 +140,12 @@ class UserController extends \BaseController {
 		if($user) {
 			return Response::json(
 				array(
-					'error' => false,
-					'user' => $user->toArray()
+					'error' 		=> false,
+					'username'		=> $user->username,
+					'id'			=> $user->id,
+					'email'			=> $user->email,
+					'created_at'	=> $user->created_at
+
 				),
 				200
 			);
