@@ -10,7 +10,7 @@ app.factory('BooksFactory', function ($resource) {
             get: {
                 method: 'GET',
                 params: {
-                    id: "@id"
+                    id: '@id'
                 }
             }
         })
@@ -18,14 +18,13 @@ app.factory('BooksFactory', function ($resource) {
     };
 
     factory.getAuthors = function () {
-        return $resource('http://localhost:port/wriiite/public/api/v1/books/:id/users', {
+        return $resource('/api/v1/books/:id/users', {
             id : '@id'
         }, {
             get : {
                 method : 'GET',
                 params : {
-                    id      : '@id',
-                    port    : ':8888'
+                    id      : '@id'
                 }
             }
         });
@@ -42,14 +41,13 @@ app.factory('UsersFactory', function ($resource) {
     factory = {};
 
     factory.getUsers = function () {
-        return $resource('http://localhost:port/wriiite/public/api/v1/users/:id', {
+        return $resource('/api/v1/users/:id', {
             id: '@id'
         }, {
             get: {
                 method: 'GET',
                 params: {
-                    id: "@id",
-                    port : ':8888'
+                    id: '@id'
                 },
             }
         })
@@ -57,28 +55,26 @@ app.factory('UsersFactory', function ($resource) {
     };
 
     factory.getPagesByAuthor = function () {
-        return $resource('http://localhost:port/wriiite/public/api/v1/users/:id/pages', {
+        return $resource('/api/v1/users/:id/pages', {
             id : '@id'
         }, {
             get : {
                 method : 'GET',
                 params : {
-                    id      : '@id',
-                    port    : ':8888'
+                    id      : '@id'
                 }
             }
         });
     };
 
     factory.getBooksByAuthor = function () {
-        return $resource('http://localhost:port/wriiite/public/api/v1/users/:id/books', {
+        return $resource('/api/v1/users/:id/books', {
             id : '@id'
         }, {
             get : {
                 method : 'GET',
                 params : {
-                    id      : '@id',
-                    port    : ':8888'
+                    id      : '@id'
                 }
             }
         });
@@ -93,14 +89,13 @@ app.factory('PagesFactory', function ($resource) {
     factory = {};
 
     factory.getPages = function () {
-        return $resource('http://localhost:port/wriiite/public/api/v1/pages/:id', {
+        return $resource('/api/v1/pages/:id', {
             id: '@id'
         }, {
             get: {
                 method: 'GET',
                 params: {
-                    id: "@id",
-                    port : ':8888'
+                    id: '@id'
                 },
             }
         })
