@@ -1,0 +1,53 @@
+
+<div class="row">
+	<div class="col-lg-12">
+
+		<h2>{{user.username}} <small>ı wriiiter since {{user.created_at.date |  date:'MM/dd/yyyy @ h:mma'}}</small></h2>
+		<hr />
+
+	</div>
+
+	<div class="col-lg-3">
+		<div class="well">
+			<h4>Books by {{user.username}}</h4>
+			<input type='text' ng-show="books.items.length" ng-model='searchBooks' class="form-control" placeholder="Search for books">
+			<hr />
+			<ul class="list-unstyled">
+				<li ng-repeat='book in books.items | filter:{title:searchBooks}'>
+					<b><a href="#/book/{{book.id}}" />{{book.title}}</a></b>
+					<br />
+					<small>{{book.created_at}}</small>
+				</li>
+			</ul>
+			<small class="text-muted" ng-hide="books.items.length">No books written yet</small>
+		</div>
+	</div>
+
+	<div class="col-lg-9">
+
+		<h4>Last pages by {{user.username}} </h4>
+		<hr />
+		<button class="btn btn-default btn-xs" ng-click='validPages(1)' ng-disabled="sortValid">Validated pages</button>
+		<button class="btn btn-default btn-xs" ng-click='validPages(0)' ng-disabled="!sortValid">Non-validated pages</button>
+		<hr />
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="alert alert-info" ng-show="pages.length">
+					No pages here
+				</div>
+			</div>
+
+			<div class="col-lg-6 item-repeat" ng-repeat='page in pages.items | filter:{status:sortValid}'>
+				<blockquote>
+					<p>{{page.content | cut:true:200:'[...]'}}</p>
+				</blockquote>	
+
+				<p><a href="#/book/{{page.book_id}}" class="btn btn-xs btn-default">Wriiiten in {{page.book_title}}</a></p>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
