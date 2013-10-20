@@ -8,6 +8,9 @@ require.config({
     // Almond is used to lighten the output filesize.
     "almond": "./vendor/almond/almond",
 
+    // requirejs text plugin
+    "text" : "/vendor/requirejs-text/text",
+
     // Opt for Lo-Dash Underscore compatibility build over Underscore.
     "underscore": "/vendor/lodash/dist/lodash.underscore",
 
