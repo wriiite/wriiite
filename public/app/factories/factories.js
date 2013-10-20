@@ -4,14 +4,13 @@ app.factory('BooksFactory', function ($resource) {
     
     factory.getBooks = function () {
 
-        return $resource('http://localhost:port/wriiite/public/api/v1/books/:id', {
+        return $resource('/api/v1/books/:id', {
             id: '@id'
         }, {
             get: {
                 method: 'GET',
                 params: {
-                    id: "@id",
-                    port : ':8888'
+                    id: "@id"
                 }
             }
         })
