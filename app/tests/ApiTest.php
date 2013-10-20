@@ -12,7 +12,7 @@ class ApiTest extends TestCase {
 	{
 		$response = $this->call('GET', '/api/v1');
 		$this->assertTrue($response->isOk());
-		$this->assertEquals('API v1 is alive', json_decode($response->getContent())->message );
+		$this->assertEquals('API v0.1 is alive', json_decode($response->getContent())->message );
 	}
 
 	/**
