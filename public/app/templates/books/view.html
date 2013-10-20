@@ -1,0 +1,14 @@
+<% document.title = book.title %>
+<h1><%= book.title %></h1>
+<p>Curated by <a class="user" href="<%= book.user.id %>"><%= book.user.username %></a></p>
+<p>
+	<%= book.description %>
+</p>
+
+<ul>
+<% _.each(book.pages, function(page){ %>
+	<% if (page.s == 1) { %>
+	<li>Page <span><%= page.n %></span>: <a href="page/<%= page.id %>"><%= page.content.substring(0,50) %>...</a> by <a class="user" href="<%= page.user.id %>"><%= page.user.username %></a></li>
+	<% }; %>
+<% }); %>
+</ul>

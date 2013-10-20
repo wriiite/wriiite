@@ -11,4 +11,8 @@ define(function(require, exports, module) {
 
   // The root path to run the application through.
   app.root = "/";
+  app.api = 'http://localhost:8000/api/v1'
+
+  console.log('app',app);
+  return app; // globally accessible
 });
