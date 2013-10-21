@@ -13,13 +13,14 @@
 			<input type='text' ng-show="books.items.length" ng-model='searchBooks' class="form-control" placeholder="Search for books">
 			<hr />
 			<ul class="list-unstyled">
-				<li ng-repeat='book in books.items | filter:{title:searchBooks}'>
+				<li ng-repeat='book in filteredBooks = (books.items | filter:{title:searchBooks})'>
 					<b><a href="#/book/{{book.id}}" />{{book.title}}</a></b>
 					<br />
 					<small>{{book.created_at}}</small>
 				</li>
 			</ul>
 			<small class="text-muted" ng-hide="books.items.length">No books written yet</small>
+			<small class="text-muted" ng-hide="filteredBooks.length">The research returned no results</small>
 		</div>
 	</div>
 
@@ -32,12 +33,12 @@
 		<hr />
 		<div class="row">
 			<div class="col-lg-12">
-				<div class="alert alert-info" ng-show="pages.length">
-					No pages here
+				<div class="alert alert-info" ng-hide="filterPages.length">
+					There are no pages here
 				</div>
 			</div>
 
-			<div class="col-lg-6 item-repeat" ng-repeat='page in pages.items | filter:{status:sortValid}'>
+			<div class="col-lg-6 item-repeat" ng-repeat='page in filterPages = (pages.items | filter:{status:sortValid})'>
 				<blockquote>
 					<p>{{page.content | cut:true:200:'[...]'}}</p>
 				</blockquote>	

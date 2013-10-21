@@ -10,11 +10,13 @@
 				<button class="btn btn-default btn-xs" ng-click='validAuthorBtn(2)' ng-disabled="sortValid">Non-published authors</button>
 				
 			</h4>
+			<hr />
 			<ul class="list-inline list-unstyled">
-				<li class="repeat-item" ng-repeat="author in authors.items | filter:{validAuthor:!sortValid} ">
+				<li class="repeat-item" ng-repeat="author in filtered = (authors.items | filter:{validAuthor:!sortValid})  ">
 					<a href="#/user/{{author.id}}" class="label label-info">{{author.username}}</a>
 				</li>	
 			</ul>
+			<small class="text-muted" ng-hide="filtered.length">There are no wriiiters here</small>
 		</div>
 		<hr />
 		<a href="#/books" class="btn btn-default btn-xs">« Back to the list</a>

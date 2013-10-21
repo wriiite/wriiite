@@ -6,7 +6,7 @@
 		<hr />
 	</div>
 	
-	<div class="col-lg-12 repeat-item" ng-repeat="book in books.items | filter:{title:searchBooks}">
+	<div class="col-lg-12 repeat-item" ng-repeat="book in filteredBooks = (books.items | filter:{title:searchBooks})">
 
 		<h4>{{book.title}} <small class=" text-muted">ı created at : {{book.created_at}}</small> </h4>
 
@@ -16,5 +16,9 @@
 		<a href="#/book/{{book.id}}" class="btn btn-default btn-sm">See the book</a>
 		<hr />
 	</div>
+	<div class="col-lg-12">
+		<small class="text-muted" ng-hide="filteredBooks.length">The research returned no results</small>
+	</div>
+	
 
 </div>
