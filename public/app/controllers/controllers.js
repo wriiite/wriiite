@@ -4,13 +4,13 @@ app.controller('BookController', function ($scope, BooksFactory, $routeParams) {
     function init() {
     	var bookID = ($routeParams.bookID) ? parseInt($routeParams.bookID) : 0;
         if (bookID > 0) {
-            $scope.book 		= BooksFactory.getBooks().get({id : bookID});
-            $scope.authors 		= BooksFactory.getAuthors().get({id : bookID});
+            $scope.book 		= BooksFactory.get({id : bookID});
+            $scope.authors 		= BooksFactory.authors({id : bookID});
         }
         else 
         {
 
-        	$scope.books = BooksFactory.getBooks().get();
+        	$scope.books = BooksFactory.get();
         }
 
 
@@ -39,10 +39,10 @@ app.controller('UserController', function ($scope, UsersFactory, $routeParams, $
     function init() {
     	var userID = ($routeParams.userID) ? parseInt($routeParams.userID) : 0;
         if (userID > 0) {
-            $scope.user     = UsersFactory.getUsers().get({id : userID}, function() 
+            $scope.user     = UsersFactory.get({id : userID}, function() 
                 {
-                    $scope.pages    = UsersFactory.getPagesByAuthor().get({id: userID});
-                    $scope.books    = UsersFactory.getBooksByAuthor().get({id: userID});
+                    $scope.pages    = UsersFactory.pagesByAuthor({id: userID});
+                    $scope.books    = UsersFactory.booksByAuthor({id: userID});
                 },
                 function(response) {
                 //404 Or bad
@@ -55,7 +55,7 @@ app.controller('UserController', function ($scope, UsersFactory, $routeParams, $
         }
         else 
         {
-        	$scope.users = UsersFactory.getUsers().get();
+        	$scope.users = UsersFactory.get();
         }
 
         $scope.sortValid    = 1;

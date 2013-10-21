@@ -1,106 +1,72 @@
-app.factory('BooksFactory', function ($resource) {
+app.constant('baseURL', '/api/v1/');
 
-    var factory = {};
-    
-    factory.getBooks = function () {
+app.factory('UsersFactory', function ($resource, baseURL) {
 
-        return $resource('/api/v1/books/:id', {
-            id: '@id'
-        }, {
-            get: {
-                method: 'GET',
-                params: {
-                    id: '@id'
-                }
+    return $resource(baseURL + 'users/:id/:rel', {
+        id: '@id'
+    }, {
+        get: {
+            method: 'GET',
+            params: {
+                id  : '@id'
             }
-        })
-
-    };
-
-    factory.getAuthors = function () {
-        return $resource('/api/v1/books/:id/users', {
-            id : '@id'
-        }, {
-            get : {
-                method : 'GET',
-                params : {
-                    id      : '@id'
-                }
+        },
+        pagesByAuthor : {
+            method: 'GET',
+            params: {
+                id  : '@id',
+                rel : 'pages'
             }
-        });
-    };
 
-    return factory;
+        },
+        booksByAuthor : {
+            method: 'GET',
+            params: {
+                id  : '@id',
+                rel : 'books'
+            }
 
+        },
+    });
+
+});
+
+app.factory('BooksFactory', function ($resource, baseURL) {
+
+    return $resource(baseURL + 'books/:id/:rel', {
+        id: '@id'
+    }, {
+        get: {
+            method: 'GET',
+            params: {
+                id  : '@id'
+            }
+        },
+        authors: {
+            method: 'GET',
+            params: {
+                id  : '@id',
+                rel : 'users'
+            }
+        },
+
+    });
    
 });
 
 
-app.factory('UsersFactory', function ($resource) {
 
-    factory = {};
+app.factory('PagesFactory', function ($resource, baseURL) {
 
-    factory.getUsers = function () {
-        return $resource('/api/v1/users/:id', {
-            id: '@id'
-        }, {
-            get: {
-                method: 'GET',
-                params: {
-                    id: '@id'
-                },
-            }
-        })
-        
-    };
+    return $resource(baseURL + 'pages/:id', {
+        id: '@id'
+    }, {
+        get: {
+            method: 'GET',
+            params: {
+                id  : '@id'
+            },
+        }
+    })
 
-    factory.getPagesByAuthor = function () {
-        return $resource('/api/v1/users/:id/pages', {
-            id : '@id'
-        }, {
-            get : {
-                method : 'GET',
-                params : {
-                    id      : '@id'
-                }
-            }
-        });
-    };
-
-    factory.getBooksByAuthor = function () {
-        return $resource('/api/v1/users/:id/books', {
-            id : '@id'
-        }, {
-            get : {
-                method : 'GET',
-                params : {
-                    id      : '@id'
-                }
-            }
-        });
-    };
-    
-    return factory;
-});
-
-
-app.factory('PagesFactory', function ($resource) {
-
-    factory = {};
-
-    factory.getPages = function () {
-        return $resource('/api/v1/pages/:id', {
-            id: '@id'
-        }, {
-            get: {
-                method: 'GET',
-                params: {
-                    id: '@id'
-                },
-            }
-        })
-        
-    };
-    
-    return factory;
 });
