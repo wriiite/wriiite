@@ -23,7 +23,7 @@ class BookTableSeeder extends Seeder {
 		));
 
 		Book::create(array(
-			'user_id' => 5,
+			'user_id' => 3,
 			'slug' => 'dramatis-personae',
 			'title' => 'Dramatis Personae',
 			'description' => 'This one is in english',

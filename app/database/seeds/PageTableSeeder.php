@@ -58,11 +58,11 @@ class PageTableSeeder extends Seeder {
 			'parent_id' => 4,
 			'number' => 2,
 			'content' => "*A*more captus Alcumenas Iuppiter \n*M*utavit sese in formam eius coniugis, \n*P*ro patria Amphitruo dum decernit cum hostibus. \n*H*abitu Mercurius ei subservit Sosiae. \n*I*s advenientis servum ac dominum frustra habet. \n*T*urbas uxori ciet Amphitruo, atque invicem \n*R*aptant pro moechis. Blepharo captus arbiter \n*V*ter sit non quit Amphitruo decernere. \n*O*mnem rem noscunt. geminos Alcumena enititur \n",
-			'status' => true
+			'status' => false
 		));
 
 		Page::create(array(
-			'user_id' => 5,
+			'user_id' => 3,
 			'book_id' => 3,
 			'parent_id' => 0,
 			'number' => 1,
@@ -76,7 +76,7 @@ class PageTableSeeder extends Seeder {
 			'parent_id' => 7,
 			'number' => 2,
 			'content' => "Now I will tell you who bade me come, and why I came, and likewise myself state my own name. Jupiter bade me come: my name is Mercury (_pauses, evidently hoping he has made an impression_). My father has sent me here to you to make a plea, yea, albeit he knew that whatever was told you in way of command you would do, inasmuch as he realized that you revere and dread him as men should Jupiter. ",
-			'status' => false
+			'status' => true
 		));
 
 		Page::create(array(
