@@ -1,11 +1,10 @@
 <?php
 
 class BookController extends \BaseController {
-	
 
 	public function __construct() {
-        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
-    }
+		$this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -17,26 +16,41 @@ class BookController extends \BaseController {
 		$max 	= intval(Input::get('max',10));
 		$offset = intval(Input::get('offset',0));
 		$books 	= Book::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
-			
-		if($books) {
+
+		if($books && count($books) > 0) {
 			return Response::json(
 				array(
-					'items' 	=> $books->toArray(),
-					'metadata'	=> array(
-						'max'		=> $max,
-						'offset'	=> $offset,
-						'error'		=> false
-						)
-					),
+					'items' => $books->toArray(),
+					'metadata' => array(
+						'max' => $max,
+						'offset' => $offset,
+						'error' => false
+					)
+				),
+				200
+			);
+		}
+		elseif(count($books) == 0) {
+			return Response::json(
+				array(
+					'items' => [],
+					'metadata' => array(
+						'max' => $max,
+						'offset' => $offset,
+						'error' => false,
+						'message' => 'No books found'
+					)
+				),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'metadata'	=> array(
-						'error' 	=> true
-						)
+					'metadata' => array(
+						'error' => true,
+						'message' => 'No books found, unknown error'
+					)
 				),
 				404
 			);
@@ -59,22 +73,39 @@ class BookController extends \BaseController {
 		if($books && count($books) > 0) {
 			return Response::json(
 				array(
-					'items' 	=> $books->toArray(),
-					'metadata'	=> array(
-						'max'		=> $max,
-						'offset'	=> $offset,
-						'error'		=> false
-						)
-					),
+					'items' => $books->toArray(),
+					'metadata' => array(
+						'max' => $max,
+						'offset' => $offset,
+						'error' => false
+					)
+				),
 				200
+			);
+		}
+		elseif ($books == 0) {
+			return Response::json(
+				array(
+					'items' => [],
+					'metadata' => array(
+						'max' => $max,
+						'offset' => $offset,
+						'error' => false,
+						'message' => 'No books found'
+					)
+				),
+				200 // no content, wanna check best practices
+						// http://benramsey.com/blog/2008/05/http-status-204-no-content-and-205-reset-content/
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'metadata'	=> array(
-						'error' 	=> true
-						)
+					'metadata' => array(
+						'max' => $max,
+						'offset' => $offset,
+						'error' => true
+					)
 				),
 				404
 			);
@@ -107,18 +138,20 @@ class BookController extends \BaseController {
 
 
 		$rules = array(
-		        'title' 		=> 'required|min:3',
-		        'description' 	=> 'required|min:30'
-		    );
+			'title' 		=> 'required|min:3',
+			'description' 	=> 'required|min:30'
+		);
 
 
 		$validator = Validator::make(Input::all(), $rules);
 
 		if ($validator->fails()) {
-		   return Response::json(
+			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'The book creation failed'
+					'metadata' => array(
+						'error' 	=> true,
+						'message' 	=> 'The book creation has failed'
+					)
 				),
 				404
 			);
@@ -132,8 +165,10 @@ class BookController extends \BaseController {
 			if(count($existSlug) > 0) {
 				return Response::json(
 					array(
-						'error' 	=> true,
-						'message' 	=> 'This title is already taken'
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'This title is already taken'
+						)
 					),
 					404
 				);
@@ -147,11 +182,14 @@ class BookController extends \BaseController {
 				$book->status 		= false;
 				$book->save();
 
-				return Response::json(
-					array(
+				$stored = $book->toArray();
+				$metadata = array(
+					'metadata' => array(
 						'error' => false,
-						'book' 	=> $book->toArray()
-					),
+					)
+				);
+				return Response::json(
+					array_merge($stored,$metadata),
 					201
 				);
 			}
@@ -189,7 +227,9 @@ class BookController extends \BaseController {
 
 			return Response::json(
 				array(
-					'error' 		=> false,
+					'metadata'	=> array(
+						'error' 		=> false
+					),
 					'title'			=> $book->title,
 					'slug'			=> $book->slug,
 					'description' 	=> $book->description,
@@ -204,8 +244,10 @@ class BookController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'Book not found'
+					'metadata' => array(
+						'error' 	=> true,
+						'message' 	=> 'Book not found'
+					)
 				),
 				404
 			);
@@ -231,7 +273,7 @@ class BookController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$modified 	= [];
+		$updated 	= [];
 		$errors 	= [];
 		$book 		= Book::where('user_id', Auth::user()->id)->find($id);
 
@@ -244,8 +286,20 @@ class BookController extends \BaseController {
 					$errors['description'] = true;
 				}
 				else {
-				$book->description 			= Request::get('description');
-				$modified['description'] 	= Request::get('description');
+					$book->description 			= Request::get('description');
+					$updated['description'] 	= Request::get('description');
+				}
+			}
+
+			if ( Request::get('title') ) {
+
+				$validator = Validator::make(Input::all(), array('title' => 'required|min:3'));
+				if($validator->fails()) {
+					$errors['title'] = true;
+				}
+				else {
+					$book->title 						= Request::get('title');
+					$updated['title']			 	= Request::get('title');
 				}
 			}
 
@@ -255,12 +309,13 @@ class BookController extends \BaseController {
 
 				return Response::json(
 					array(
-						'error' 	=> true,
-						'message' 	=> 'The description isn\'t long enough'
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'The description too short'
+						)
 					),
 					204
 				);
-
 			}
 
 			// Else, we can update the book
@@ -268,12 +323,15 @@ class BookController extends \BaseController {
 			else {
 				$book->save();
 
-				return Response::json(
-					array(
+				$metadata = array(
+					'metadata' => array(
 						'error' 	=> false,
-						'modified' 	=> $modified,
 						'message' 	=> 'Book updated'
-					),
+					)
+				);
+
+				return Response::json(
+					array_merge($updated,$metadata),
 					200
 				);
 			}
@@ -281,8 +339,10 @@ class BookController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'Book doesn\'t exist'
+					'metadata' => array(
+						'error' 	=> true,
+						'message' 	=> 'Book does not exist'
+					)
 				),
 				404
 			);
@@ -304,8 +364,11 @@ class BookController extends \BaseController {
 
 			return Response::json(
 				array(
-					'error' 	=> false,
-					'message'	 => 'book deleted'
+					'metadata'=>	array(
+						'error' 	=> false,
+						'message'	 => 'book deleted'
+					),
+					'id' => $id
 				),
 				200
 			);
@@ -313,13 +376,14 @@ class BookController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'Book doesn\'t exist'
+					'metadata'=>	array(
+						'error' 	=> true,
+						'message'	 => 'book may have not been deleted'
+					)
 				),
 				404
 			);
 		}
 		
 	}
-
 }
