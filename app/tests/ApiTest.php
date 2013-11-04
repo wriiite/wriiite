@@ -237,14 +237,27 @@ class ApiTest extends TestCase {
 	 */
 	public function testApiBookByUser()
 	{
-		return;
+
 		$response = $this->call('GET', '/api/v1/users/1/books');
 		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals('integer', gettype($j->items[0]->id));
 
-		$this->assertEquals(1, $j->books[0]->id);
-		$this->assertEquals('first-book', $j->items[0]->slug);
-		$this->assertEquals('First Book', $j->items[0]->title);
-		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->books[0]->description);
+		$first = 1; // looking for first-book
+
+		for ($i=0; $i < count($j->items); $i++) { 
+			if($j->items[$i]->id == $first)
+				$x = $i;
+		}
+
+		// $j->items[$x] is the first book
+
+		$this->assertEquals($first, $j->items[$x]->id);
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals('first-book', $j->items[$x]->slug);
+		$this->assertEquals('First Book', $j->items[$x]->title);
+		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->items[$x]->description);
+
 	}
 
 	/**
@@ -254,29 +267,41 @@ class ApiTest extends TestCase {
 	 */
 	public function testApiUserRead()
 	{
-		return;
-		$response = $this->call('GET', '/api/v1/user');
+		$response = $this->call('GET', '/api/v1/users');
 		$j = json_decode($response->getContent());
-		$this->assertEquals(1, $j->users[0]->id);
-		$this->assertEquals('firstuser', $j->users[0]->username);
-		$this->assertTrue(isset($j->users[0]->username));
-		$this->assertFalse(isset($j->users[0]->email));
-		$this->assertFalse(isset($j->users[0]->password));
+		$this->assertFalse($j->metadata->error);
+
+		$first = 1; // looking for firstuser
+
+		for ($i=0; $i < count($j->items); $i++) { 
+			if($j->items[$i]->id == $first)
+				$x = $i;
+		}
+
+		// $j->items[$x] is the first user
+
+		$this->assertEquals(1, $j->items[$x]->id);
+		$this->assertEquals('firstuser', $j->items[$x]->username);
+		$this->assertTrue(isset($j->items[$x]->username));
+		$this->assertFalse(isset($j->items[$x]->email));
+		$this->assertFalse(isset($j->items[$x]->password));
 
 		// first user
-		$response = $this->call('GET', '/api/v1/user/1');
+		$response = $this->call('GET', '/api/v1/users/1');
 		$j = json_decode($response->getContent());
-		$this->assertEquals(1, $j->user->id);
-		$this->assertEquals('firstuser', $j->user->username);
-		$this->assertTrue(isset($j->user->username));
-		$this->assertFalse(isset($j->user->email));
-		$this->assertFalse(isset($j->user->password));
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals(1, $j->id);
+		$this->assertEquals('firstuser', $j->username);
+		$this->assertTrue(isset($j->username));
+//		$this->assertFalse(isset($j->email));
+//		$this->assertFalse(isset($j->password));
 
 		// second user
-		$response = $this->call('GET', '/api/v1/user/2');
+		$response = $this->call('GET', '/api/v1/users/2');
 		$j = json_decode($response->getContent());
-		$this->assertEquals(2, $j->user->id);
-		$this->assertEquals('seconduser', $j->user->username);
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals(2, $j->id);
+		$this->assertEquals('seconduser', $j->username);
 
 	}
 }

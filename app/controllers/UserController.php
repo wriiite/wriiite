@@ -3,10 +3,8 @@
 class UserController extends \BaseController {
 
 	public function __construct() {
-
-        $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'store','bookContributors')));
-
-    }
+		$this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'store','bookContributors')));
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -18,7 +16,7 @@ class UserController extends \BaseController {
 		$max 	= intval(Input::get('max',10));
 		$offset = intval(Input::get('offset',0));
 		$users 			= User::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
-			
+
 		if($users) {
 			return Response::json(
 				array(
@@ -27,8 +25,8 @@ class UserController extends \BaseController {
 						'max'		=> $max,
 						'offset'	=> $offset,
 						'error'		=> false
-						)
-					),
+					)
+				),
 				200
 			);
 		}
@@ -37,7 +35,7 @@ class UserController extends \BaseController {
 				array(
 					'metadata'	=> array(
 						'error' 	=> true
-						)
+					)
 				),
 				404
 			);
@@ -99,27 +97,40 @@ class UserController extends \BaseController {
 					}
 				}
 			}
-
-			return Response::json(
-				array(
-					'items' 	=> $users->toArray(),
-					'metadata'	=> array(
-						'max'		=> $max,
-						'offset'	=> $offset,
-						'error'		=> false
+			if(count($users) > 0) {
+				return Response::json(
+					array(
+						'items' 	=> $users->toArray(),
+						'metadata'	=> array(
+							'max'		=> $max,
+							'offset'	=> $offset,
+							'error'		=> false
+							)
+						),
+					200
+				);
+				
+			}
+			else {
+				return Response::json(
+					array(
+						'metadata'	=> array(
+							'error' 	=> true,
+							'message' 	=> 'No contributors found'
 						)
 					),
-				200
-			);
+					404
+				);
+			}
 
-			
 		}
 		else {
 			return Response::json(
 				array(
 					'metadata'	=> array(
-						'error' 	=> true
-						)
+						'error' 	=> true,
+						'message' 	=> 'No book found'
+					)
 				),
 				404
 			);
@@ -140,12 +151,13 @@ class UserController extends \BaseController {
 		if($user) {
 			return Response::json(
 				array(
-					'error' 		=> false,
+					'metadata'	=> array(
+						'error' 	=> false
+					),
 					'username'		=> $user->username,
 					'id'			=> $user->id,
 					'email'			=> $user->email,
 					'created_at'	=> $user->created_at
-
 				),
 				200
 			);
@@ -153,8 +165,10 @@ class UserController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'User not found'
+					'metadata'	=> array(
+						'error' 	=> true,
+						'message' 	=> 'User not found'
+					)
 				),
 				404
 			);
@@ -198,8 +212,10 @@ class UserController extends \BaseController {
 
 			return Response::json(
 				array(
-					'error' 	=> false,
-					'message'	 => 'User deleted'
+					'metadata'	=> array(
+						'error' 	=> false,
+						'message'	 => 'User deleted'
+					)
 				),
 				200
 			);
@@ -212,8 +228,10 @@ class UserController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'User not deleted'
+					'metadata'	=> array(
+						'error' 	=> true,
+						'message' 	=> 'User not deleted'
+					)
 				),
 				404
 			);
