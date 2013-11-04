@@ -1,3 +1,48 @@
 # Contribution Guidelines
 
-Please submit all issues and pull requests to the [laravel/framework](http://github.com/laravel/framework) repository!
+For back-end, please use [laravel framework](http://laravel.com/)
+For front-end, please join the backbone branch or the angular branch.
+
+## backend
+
+use at least php5.4
+
+### Installing laravel
+you can clone this repo and use [composer](http://laravel.com/docs/installation)
+
+### testing
+use phpunit
+
+### local dev
+
+you can launch artisan serve to serve the backend on http://localhost:8000
+~~~
+$ php artisan serve
+~~~
+
+### contributing
+follow [laravel's coding guidelines](https://github.com/laravel/framework/blob/master/CONTRIBUTING.md) and use tabs.
+
+## frontend (using backbonejs)
+
+### requirements
+#### node & npm
+You will need node and npm. On a mac, I recommend using (homebrew)[http://brew.sh/] then `$ brew install nodejs` (and you might install nm separately)
+#### grunt & bower
+Grunt and bower are very useful. install them with npm
+~~~
+$ npm install -g grunt-cli
+$ npm install -g bower
+~~~
+
+### installing the project
+cd to the root directory
+- run `npm install` to install all nodejs dependencies (essentially grunt stuffs)
+- run `bower install` to install all javascript dependencies (jquery, backbone...)
+
+### test and code
+
+http://localhost:8000/#/ is the home directory
+
+### contributing
+in front-end, we use 2 spaces instead of tabs (don't ask me why, i don't do the rules there)
