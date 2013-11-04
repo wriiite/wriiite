@@ -306,4 +306,66 @@ class ApiTest extends TestCase {
 		$this->assertEquals('seconduser', $j->username);
 
 	}
+	/**
+	 * Test API User Write
+	 *
+	 * @author gaspard
+	 */
+	public function testApiUserWrite()
+	{
+		// users can't be updated this way for the moment
+		// let's wait for auth
+
+		// users can't be created this way for the moment
+		// let's wait for auth
+	}
+	/**
+	 * Test API User Delete
+	 *
+	 * @author gaspard
+	 */
+	public function testApiUserDelete()
+	{
+		// yet, users can delete themselves
+		$user1 = new User(array('id'=>1));
+		$user2 = new User(array('id'=>2));
+		// the deletable user is 'deleteme' id 6
+		$user6 = new User(array('id'=>6));
+		$this->be($user6);
+
+		// consult it, it should exist
+		$response = $this->call('GET', '/api/v1/users/6');
+		$this->assertTrue($response->getStatusCode() == 200);
+		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+
+		// delete it
+		$response = $this->call('DELETE', '/api/v1/users/6');
+		$this->assertTrue($response->getStatusCode() == 200);
+		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals(6,$j->id);
+
+
+		// consult it, it should not exist
+		$response = $this->call('GET', '/api/v1/users/6');
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+
+		// fail to delete it (already deleted or the user might be logged out)
+		$response = $this->call('DELETE', '/api/v1/users/6');
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+		// fail to delete, firstuser cannot delete seconduser
+		$this->be($user1);
+		$response = $this->call('DELETE', '/api/v1/users/2');
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+	}
 }

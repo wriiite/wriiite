@@ -214,7 +214,8 @@ class UserController extends \BaseController {
 					'metadata'	=> array(
 						'error' 	=> false,
 						'message'	 => 'User deleted'
-					)
+					),
+					'id'=>$id
 				),
 				200
 			);

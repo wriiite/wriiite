@@ -41,6 +41,13 @@ class UserTableSeeder extends Seeder {
 			'api_key'	=> Hash::make('plautus')
 		));
 
+		User::create(array(
+			'username' 	=> 'deleteme', // this user has to be deleted during the tests
+			'password' 	=> Hash::make('deleteme'),
+			'email' 	=> 'deleteme@yopmail.com',
+			'api_key'	=> Hash::make('deleteme')
+		));
+
 	}
  
 }
