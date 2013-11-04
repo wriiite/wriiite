@@ -368,4 +368,20 @@ class ApiTest extends TestCase {
 		$this->assertTrue($j->metadata->error);
 
 	}
+	/**
+	 * Test API Contributors
+	 *
+	 * @author gaspard
+	 */
+	public function testApiContributors()
+	{
+		// testing the UserController@bookContributors method
+		$response = $this->call('GET', '/api/v1/books/1/users');
+		$this->assertTrue($response->getStatusCode() == 200);
+		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+		$this->assertGreaterThan(0,count($j->items));
+
+		$this->assertEquals('string',gettype($j->items[0]->username));
+	}
 }
