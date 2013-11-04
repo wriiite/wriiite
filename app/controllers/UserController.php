@@ -156,7 +156,6 @@ class UserController extends \BaseController {
 					),
 					'username'		=> $user->username,
 					'id'			=> $user->id,
-					'email'			=> $user->email,
 					'created_at'	=> $user->created_at
 				),
 				200

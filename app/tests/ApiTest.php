@@ -285,6 +285,7 @@ class ApiTest extends TestCase {
 		$this->assertTrue(isset($j->items[$x]->username));
 		$this->assertFalse(isset($j->items[$x]->email));
 		$this->assertFalse(isset($j->items[$x]->password));
+		$this->assertFalse(isset($j->items[$x]->api_key));
 
 		// first user
 		$response = $this->call('GET', '/api/v1/users/1');
@@ -293,8 +294,9 @@ class ApiTest extends TestCase {
 		$this->assertEquals(1, $j->id);
 		$this->assertEquals('firstuser', $j->username);
 		$this->assertTrue(isset($j->username));
-//		$this->assertFalse(isset($j->email));
-//		$this->assertFalse(isset($j->password));
+		$this->assertFalse(isset($j->email));
+		$this->assertFalse(isset($j->password));
+		$this->assertFalse(isset($j->api_key));
 
 		// second user
 		$response = $this->call('GET', '/api/v1/users/2');
