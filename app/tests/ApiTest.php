@@ -237,7 +237,7 @@ class ApiTest extends TestCase {
 	 */
 	public function testApiBookByUser()
 	{
-
+		// books by users
 		$response = $this->call('GET', '/api/v1/users/1/books');
 		$j = json_decode($response->getContent());
 		$this->assertFalse($j->metadata->error);
@@ -257,6 +257,14 @@ class ApiTest extends TestCase {
 		$this->assertEquals('first-book', $j->items[$x]->slug);
 		$this->assertEquals('First Book', $j->items[$x]->title);
 		$this->assertEquals('This is the first book, alpha of litterature, a never ending book', $j->items[$x]->description);
+
+		// no books for this user
+		$response = $this->call('GET','/api/v1/users/2/books');
+		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals(0,count($j->items));
+
+
 
 	}
 

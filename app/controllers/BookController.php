@@ -84,7 +84,7 @@ class BookController extends \BaseController {
 				200
 			);
 		}
-		elseif ($books == 0) {
+		elseif (count($books) == 0) {
 			return Response::json(
 				array(
 					'items' => [],
