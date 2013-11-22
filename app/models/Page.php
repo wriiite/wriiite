@@ -12,4 +12,16 @@ class Page extends Eloquent {
 		return $this->belongsTo('User');
 	}
 
+	public function getIdAttribute($value) {
+		return (int) $value;
+	}
+
+	public function getUserIdAttribute($value) {
+		return (int) $value;
+	}
+
+	public function getBookIdAttribute($value) {
+		return (int) $value;
+	}
+
 }
