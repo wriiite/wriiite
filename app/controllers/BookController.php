@@ -77,7 +77,8 @@ class BookController extends \BaseController {
 					'metadata' => array(
 						'max' => $max,
 						'offset' => $offset,
-						'error' => false
+						'error' => false,
+						'user_id' => $id
 					)
 				),
 				200
