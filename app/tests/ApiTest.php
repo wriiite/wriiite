@@ -384,4 +384,150 @@ class ApiTest extends TestCase {
 
 		$this->assertEquals('string',gettype($j->items[0]->username));
 	}
+
+	/**
+	 * Test API Page Read
+	 *
+	 * @author jonathan
+	 */
+
+	public function testApiPageRead()
+	{
+		$response = $this->call('GET', '/api/v1/pages');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(3, $j->items[2]->id);
+		$this->assertEquals('3', $j->items[2]->user_id);
+		$this->assertEquals('This is an alternate page 2 by user 3', $j->items[2]->content);
+
+		$response = $this->call('GET', '/api/v1/pages?max=2');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(2, count($j->items));
+
+		$response = $this->call('GET', '/api/v1/pages?offset=2');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals('This is an alternate page 2 by user 3', $j->items[0]->content);
+
+		$response = $this->call('GET', '/api/v1/pages?offset=99999');
+		$j = json_decode($response->getContent());
+
+		$this->assertEquals(0, count($j->items));
+
+		$response = $this->call('GET', '/api/v1/pages/2');
+		$j = json_decode($response->getContent());
+
+		//		$this->assertEquals(1, $j->id);
+		$this->assertEquals('2', $j->user->id);
+		$this->assertEquals('1', $j->book_id);
+		$this->assertEquals('This is an alternate page 2 by user 2', $j->content);
+
+	}
+
+	/**
+	 * test API Page Write
+	 * 
+	 * @return void
+	 * @author jonathan
+	 */
+	public function testApiPageWrite()
+	{
+/*		$t = 'testuser'.uniqid();
+		$user = new User(array('name' => $t, 'password' => $t, 'email'=> $t.'@mail.com'));
+*/
+		// filters are disactivated in laravel while testing
+		// we have to simulate being some user
+		$user = new User(array('id'=>1));
+		$this->be($user);
+
+		// insert
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => '1', 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
+		);
+		$this->assertTrue($response->getStatusCode() == 201);
+
+		// this *might* be after a redirection
+		$j = json_decode($response->getContent());
+		$this->assertEquals('1', $j->book_id);
+		$this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.', $j->content);
+
+		$this->assertGreaterThan(1, $j->id);
+
+		// inserting should return an id
+		$id = $j->id;
+
+		// read
+		$response = $this->call('GET', '/api/v1/pages/'.$id);
+		$j = json_decode($response->getContent());
+		$this->assertEquals('2', $j->parent_id);
+		$this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.', $j->content);
+
+		// insert fail no content
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+		// insert fail no book id
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => '2')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+		// insert fail content too short
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => '1', 'content' => 'This is too short')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+		// insert fail book doesn't exist
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => '100', 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
+		);
+		$this->assertTrue($response->getStatusCode() == 404);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+		//MANQUE LA PARTIE UPDATE 
+
+	}
+
+		/**
+	 * Test API Page By User
+	 *
+	 * @author jonathan
+	 */
+	public function testApiPageByUser()
+	{
+
+		$response = $this->call('GET', '/api/v1/users/2/pages');
+		$j = json_decode($response->getContent());
+		$this->assertFalse($j->metadata->error);
+		//$this->assertEquals('integer', gettype($j->items[0]->id));
+
+		$first = 2; // looking for the first page by user 2 (simpler content)
+
+		for ($i=0; $i < count($j->items); $i++) { 
+			if($j->items[$i]->id == $first)
+				$x = $i;
+		}
+
+		// $j->items[$x] is the first book
+
+		$this->assertEquals($first, $j->items[$x]->id);
+		$this->assertFalse($j->metadata->error);
+		$this->assertEquals('This is an alternate page 2 by user 2', $j->items[$x]->content);
+		$this->assertEquals('1', $j->items[$x]->parent_id);
+		$this->assertEquals('1', $j->items[$x]->book_id);
+
+	}
+
+
 }

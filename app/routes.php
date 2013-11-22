@@ -57,7 +57,6 @@ Route::get('/authtest', array('before' => 'auth.basic', function() {
 
 
 // Route group for API
-header('Access-Control-Allow-Origin: *');
 Route::group(array('prefix' => 'api/v1'), function() {
 	Route::get('/',function() {
 		return Response::json(["message"=>"API v0.2 is alive"]);
