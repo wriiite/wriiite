@@ -151,8 +151,6 @@ class ApiTest extends TestCase {
 		// update title is not allowed
 		$response = $this->call('PUT', '/api/v1/books/'.$id, ['title'=> 'My New book title, updated']);
 		$this->assertFalse($response->getStatusCode() == 200);
-		var_dump($response->getContent());
-		
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
