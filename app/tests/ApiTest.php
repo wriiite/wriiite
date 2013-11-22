@@ -136,29 +136,37 @@ class ApiTest extends TestCase {
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
-		// update
-		$response = $this->call('PUT', '/api/v1/books/'.$id, ['title'=> 'My New book title, updated']);
-		$this->assertTrue($response->getStatusCode() == 200);
-		$j = json_decode($response->getContent());
-		$this->assertFalse($j->metadata->error);
-		$this->assertEquals('My New book title, updated', $j->title);
-
-		// update fail description too short
-		$response = $this->call('PUT', '/api/v1/books/'.$id, 
-			array('title' => 'My short book', 'description' => 'This is too short')
-		);
-		$this->assertTrue($response->getStatusCode() == 204);
-
-		// update
+		// update description
 		$response = $this->call('PUT', '/api/v1/books/'.$id, ['description'=> 'This is my new book, you should enjoy it very much']);
 		$this->assertTrue($response->getStatusCode() == 200);
 		$j = json_decode($response->getContent());
 		$this->assertEquals('This is my new book, you should enjoy it very much', $j->description);
 
+		// only the description has been updated
+		$response = $this->call('GET', '/api/v1/books/'.$id);
+		$j = json_decode($response->getContent());
+		$this->assertEquals('My New book title', $j->title);
+		$this->assertEquals('This is my new book, you should enjoy it very much', $j->description);
+
+		// update title is not allowed
+		$response = $this->call('PUT', '/api/v1/books/'.$id, ['title'=> 'My New book title, updated']);
+		$this->assertFalse($response->getStatusCode() == 200);
+		var_dump($response->getContent());
+		
+		$j = json_decode($response->getContent());
+		$this->assertTrue($j->metadata->error);
+
+
+		// update fail description too short
+		$response = $this->call('PUT', '/api/v1/books/'.$id, 
+			array('description' => 'This is too short')
+		);
+		$this->assertTrue($response->getStatusCode() == 204);
+
 		// read
 		$response = $this->call('GET', '/api/v1/books/'.$id);
 		$j = json_decode($response->getContent());
-		$this->assertEquals('My New book title, updated', $j->title);
+		$this->assertEquals('My New book title', $j->title);
 		$this->assertEquals('This is my new book, you should enjoy it very much', $j->description);
 
 	}

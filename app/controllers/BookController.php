@@ -278,7 +278,7 @@ class BookController extends \BaseController {
 		$errors 	= [];
 		$book 		= Book::where('user_id', Auth::user()->id)->find($id);
 
-		if($book) {
+		if(count($book)) {
 
 			if ( Request::get('description') ) {
 
@@ -293,15 +293,22 @@ class BookController extends \BaseController {
 			}
 
 			if ( Request::get('title') ) {
+				$errors['title'] = true;
+			}
 
-				$validator = Validator::make(Input::all(), array('title' => 'required|min:3'));
-				if($validator->fails()) {
-					$errors['title'] = true;
-				}
-				else {
-					$book->title 						= Request::get('title');
-					$updated['title']			 	= Request::get('title');
-				}
+			// If trying to update the title
+
+			if(isset($errors['title'])) {
+
+				return Response::json(
+					array(
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'The title can not be updated'
+						)
+					),
+					403 // access denied
+				);
 			}
 
 			// If validation doesn't pass
