@@ -3,9 +3,7 @@
 class PageController extends \BaseController {
 	
 	public function __construct() {
-
         $this->beforeFilter('auth.basic', array('except' => array('index', 'show', 'ownedByUser')));
-
     }
 	
 	/**
@@ -15,29 +13,44 @@ class PageController extends \BaseController {
 	 */
 	public function index()
 	{
-		$max 		= intval(Input::get('max',10));
-		$offset 	= intval(Input::get('offset',0));
-		$pages 		= Page::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
-			
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$pages 	= Page::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
+
 		if($pages && count($pages) > 0) {
 			return Response::json(
 				array(
 					'items' 	=> $pages->toArray(),
-					'metadata'	=> array(
-						'max'		=> $max,
-						'offset'	=> $offset,
-						'error'		=> false
-						)
-					),
+					'metadata' 	=> array(
+						'max' 		=> $max,
+						'offset' 	=> $offset,
+						'error' 	=> false
+					)
+				),
+				200
+			);
+		}
+		elseif(count($pages) == 0) {
+			return Response::json(
+				array(
+					'items' 	=> [],
+					'metadata' 	=> array(
+						'max' 		=> $max,
+						'offset' 	=> $offset,
+						'error' 	=> false,
+						'message' 	=> 'No pages found'
+					)
+				),
 				200
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'metadata'	=> array(
-						'error' 	=> true
-						)
+					'metadata' 	=> array(
+						'error' 	=> true,
+						'message' 	=> 'No pages found, unknown error'
+					)
 				),
 				404
 			);
@@ -63,7 +76,7 @@ class PageController extends \BaseController {
 	{
 
 		$rules = array(
-			'content' 		=> 'required',
+			'content' 		=> 'required|between:300,350',
 			'book_id' 		=> 'required|exists:books,id'
 		);
 
@@ -73,17 +86,20 @@ class PageController extends \BaseController {
 
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'The page creation failed'
+					'metadata'	=> array(
+						'error' 	=> true,
+						'message' 	=> 'The page creation failed'
+					)
+					
 				),
 				404
 			);
 		}
 		else {
 
-			$book_id 			= Request::get('book_id');
-			$content			= Request::get('content');
-			$parent 			= Page::where('book_id',$book_id)->where('status',1)->orderBy('created_at', 'desc')->first();
+			$book_id 			= Input::get('book_id');
+			$content			= Input::get('content');
+			$parent 			= Page::where('book_id',$book_id)->where('status',1)->orderBy('id', 'desc')->first();
 
 			if($parent){
 				$parent_id 		= $parent->id;
@@ -104,16 +120,19 @@ class PageController extends \BaseController {
 			$page->number 		= $parent_number + 1;
 			$page->user_id		= Auth::user()->id;
 			$page->status 		= $status;
-
 			$page->save();
 
-			return Response::json(
-				array(
-					'error' => false,
-					'page' 	=> $page->toArray()
-				),
-				201
+			$stored 	= $page->toArray();
+			$metadata 	= array(
+				'metadata'	=> array(
+					'error'	=> false
+				)
 			);
+
+			return Response::json(
+					array_merge($stored,$metadata),
+					201
+				);
 		}
 	}
 
@@ -127,34 +146,45 @@ class PageController extends \BaseController {
 	 */
 	public function ownedByUser($id)
 	{
-		$max 		= intval(Input::get('max',10));
-		$offset 	= intval(Input::get('offset',0));
-		$pages 		= Page::orderBy('created_at', 'desc')->where('user_id', $id)->take($max)->skip($offset)->get();
-		foreach($pages as $p)
-		{
-			$book = Book::where('id', $p->book_id)->first();
-			$p->book_title	= $book->title;
-		}
+		$max 	= intval(Input::get('max',10));
+		$offset = intval(Input::get('offset',0));
+		$pages 	= Page::orderBy('created_at', 'desc')->where('user_id', $id)->take($max)->skip($offset)->get();
 			
 		if($pages && count($pages) > 0) {
 			return Response::json(
 				array(
 					'items' 	=> $pages->toArray(),
-					'metadata'	=> array(
-						'max'		=> $max,
-						'offset'	=> $offset,
-						'error'		=> false
-						)
-					),
+					'metadata' 	=> array(
+						'max' 		=> $max,
+						'offset' 	=> $offset,
+						'error' 	=> false
+					)
+				),
 				200
+			);
+		}
+		elseif (count($pages) == 0) {
+			return Response::json(
+				array(
+					'items' 	=> [],
+					'metadata' 	=> array(
+						'max' 		=> $max,
+						'offset' 	=> $offset,
+						'error' 	=> false,
+						'message' 	=> 'No pages found'
+					)
+				),
+				200 
 			);
 		}
 		else {
 			return Response::json(
 				array(
-					'metadata'	=> array(
+					'metadata' 	=> array(
+						'max' 		=> $max,
+						'offset' 	=> $offset,
 						'error' 	=> true
-						)
+					)
 				),
 				404
 			);
@@ -191,6 +221,7 @@ class PageController extends \BaseController {
 
 			return Response::json(
 				array(
+
 					'error' 		=> false,
 					'id'			=> $page->id,
 					'user'			=> array('id'=>$page->user->id,'username'=>$page->user->username),
@@ -201,7 +232,10 @@ class PageController extends \BaseController {
 					'content'		=> $page->content,
 					'alt'			=> $altPagesArray,
 					'created_at'	=> $page->created_at,
-					'updated_at'	=> $page->updated_at
+					'updated_at'	=> $page->updated_at,
+					'metadata'		=> array(
+						'error' 		=> false
+					)
 				),
 				200
 			);
@@ -209,8 +243,10 @@ class PageController extends \BaseController {
 		else {
 			return Response::json(
 				array(
-					'error' 	=> true,
-					'message' 	=> 'Book not found'
+					'metadata' => array(
+						'error' 	=> true,
+						'message' 	=> 'Page not found'
+					)
 				),
 				404
 			);
@@ -249,8 +285,10 @@ class PageController extends \BaseController {
 				if(count($validPage) > 0) {
 					return Response::json(
 						array(
-							'error' 	=> true,
-							'message' 	=> 'There\'s already a validated page for this page number'
+							'metadata' => array(
+								'error' 	=> true,
+								'message' 	=> 'There\'s already a validated page for this book\'s page'
+							)
 						),
 						404
 					);
@@ -261,6 +299,7 @@ class PageController extends \BaseController {
 
 					return Response::json(
 						array(
+
 							'error' => false,
 							'page' 	=> $page->toArray()
 						),
@@ -272,8 +311,10 @@ class PageController extends \BaseController {
 			else {
 				return Response::json(
 					array(
-						'error' 	=> true,
-						'message' 	=> 'You are not the owner of the book'
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'You\'re not the owner of the book'
+						)
 					),
 					404
 				);
@@ -283,12 +324,14 @@ class PageController extends \BaseController {
 		}
 		else {
 			return Response::json(
-				array(
-					'error' 	=> true,
-					'message' 	=> 'Page not found or already validated'
-				),
-				404
-			);
+					array(
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'Page not found or already validated'
+						)
+					),
+					404
+				);
 		}
 	}
 
