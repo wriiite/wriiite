@@ -331,7 +331,7 @@ class BookController extends \BaseController {
 					array(
 						'metadata' => array(
 							'error' 	=> true,
-							'message' 	=> 'You\'re not the owner of this book';
+							'message' 	=> 'You\'re not the owner of this book'
 						)
 					),
 					403
