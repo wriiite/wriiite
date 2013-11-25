@@ -122,7 +122,7 @@ class AuthController extends \BaseController {
 				'error' => $e->getMessage()
 			);
  
-			return Response::json($data, 404);
+			return Response::json($data, 400);
 		}
 	}
 
