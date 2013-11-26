@@ -10,49 +10,12 @@
 |
 */
 
-// Route::filter('api_checkauth', function()
-// {
-//   //user id
-//   $user_id = (int) Input::get('user_id');
-
-//   //signature
-//   $sig = Input::get('sig');
-
-//   try {
-//     //Lookup user
-//     $user = Sentry::user($user_id);
-
-//     if($user) {
-//       //user email
-//       $email = $user->email;
-//       //user api key
-//       $api_key = $user->api_key;
-//       //recreate signature
-//       $_sig = hash_hmac("sha256",$email.$user_id,$api_key);
-//       if($_sig === $sig) {
-//           return Response::json(array("message"=>"Request Ok"),200);
-//       }
-//       else {
-//           return Response::json(array("message"=>"Request Bad"),400);
-//       }
-//     }
-//     else {
-//       return Response::json(array("message"=>"Request not authorized"),401);
-//     }
-//   }
-//   catch (Sentry\SentryException $e) {
-//     $errors = $e->getMessage(); // catch errors such as user not existing or bad fields
-//     return Response::json(array("message"=>$errors),404);
-//   }
-
-// });
-
 Route::get('/', function() {
-	return View::make('hello');
+	return 'error : this should not be called';
 });
 
 Route::get('/authtest', array('before' => 'auth.basic', function() {
-	return View::make('hello');
+	return 'authtest ? who are you ?';
 }));
 
 
