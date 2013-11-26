@@ -286,7 +286,15 @@ class BookController extends \BaseController {
 
 					$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
 					if($validator->fails()) {
-						$errors['description'] = true;
+						return Response::json(
+							array(
+								'metadata' => array(
+									'error' 	=> true,
+									'message' 	=> 'The description too short'
+								)
+							),
+							400
+						);
 					}
 					else {
 						$book->description 			= Request::get('description');
@@ -294,15 +302,8 @@ class BookController extends \BaseController {
 					}
 				}
 
-
-				if ( Request::get('title') ) {
-					$errors['title'] = true;
-				}
-
 				// If trying to update the title
-
-				if(isset($errors['title'])) {
-
+				if ( Request::get('title') ) {
 					return Response::json(
 						array(
 							'metadata' => array(
@@ -311,20 +312,6 @@ class BookController extends \BaseController {
 							)
 						),
 						403 // access denied
-					);
-				}
-				// If validation doesn't pass
-
-				if(isset($errors['description'])) {
-
-					return Response::json(
-						array(
-							'metadata' => array(
-								'error' 	=> true,
-								'message' 	=> 'The description too short'
-							)
-						),
-						400
 					);
 				}
 
