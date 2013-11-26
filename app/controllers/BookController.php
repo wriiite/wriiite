@@ -301,6 +301,17 @@ class BookController extends \BaseController {
 						$updated['description'] 	= Request::get('description');
 					}
 				}
+				else {
+					return Response::json(
+						array(
+							'metadata' => array(
+								'error' 	=> true,
+								'message' 	=> 'Nothing to update'
+							)
+						),
+						400
+					);
+				}
 
 				// If trying to update the title
 				if ( Request::get('title') ) {
