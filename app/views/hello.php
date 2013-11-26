@@ -25,9 +25,13 @@
                   <li active-link="active"><a href="#">Books</a></li>
                   <li active-link="active"><a href="#/users/">Users</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">Login</a></li>
+                <ul class="nav navbar-nav navbar-right" ng-hide='main.user'>
+                  <li><a href="#/auth/login">Login</a></li>
                   <li><a href="#">Signup</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right" ng-show='main.user'>
+                  <li><a href="#/user/{{main.user.id}}">{{main.user.username}}</a></li>
+                  <li><a href="" ng-click='logoutUser()' class="text-danger">Logout</a></li>
                 </ul>
               </div><!-- /.navbar-collapse -->
             </div>
@@ -42,6 +46,7 @@
         <script type="text/javascript" src="libs/angular-route.min.js"></script>
 
         <!-- LIBS -->
+        <script type="text/javascript" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.7.0.js"></script>
         <script type="text/javascript" src="libs/jquery.min.js"></script>
 
         <!-- APP LOGIC -->

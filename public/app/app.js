@@ -1,4 +1,25 @@
-var app = angular.module('bookApp', ['ngResource', 'ngAnimate', 'ngRoute']);
+var app = angular.module('bookApp', ['ngResource', 'ngAnimate', 'ngRoute', 'ui.bootstrap'])
+.run(function($rootScope, Auth) {
+    $rootScope.main = {};
+    authCheck = Auth.check();
+    
+    if(authCheck){
+        Auth.load().success(function(data) {
+            $rootScope.main.user = data.user;
+        });
+    }
+
+    $rootScope.logoutUser = function() {
+        Auth.logout().success(function(data) {
+            console.log("You have been logged out.");
+            $rootScope.main = {};
+        });
+    }
+    
+
+    
+
+});
 
 //This configures the routes and associates each route with a view and a controller
 app.config(function ($routeProvider) {
@@ -24,6 +45,11 @@ app.config(function ($routeProvider) {
             {
                 controller  : 'UserController',
                 templateUrl : 'app/partials/users.html'
+            })
+        .when('/auth/login', 
+            {
+                controller  : 'AuthController',
+                templateUrl : 'app/partials/login.html'
             })
         .otherwise({ redirectTo: '/' });
 });

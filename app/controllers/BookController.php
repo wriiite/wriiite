@@ -154,7 +154,7 @@ class BookController extends \BaseController {
 						'message' 	=> 'The book creation has failed'
 					)
 				),
-				404
+				400
 			);
 		}
 
@@ -171,7 +171,7 @@ class BookController extends \BaseController {
 							'message' 	=> 'This title is already taken'
 						)
 					),
-					404
+					400
 				);
 			}
 			else {
@@ -276,71 +276,85 @@ class BookController extends \BaseController {
 	{
 		$updated 	= [];
 		$errors 	= [];
-		$book 		= Book::where('user_id', Auth::user()->id)->find($id);
+		$book 		= Book::find($id);
 
 		if(count($book)) {
 
-			if ( Request::get('description') ) {
+			if($book->user_id == Auth::user()->id)
+			{
+				if ( Request::get('description') ) {
 
-				$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
-				if($validator->fails()) {
-					$errors['description'] = true;
+					$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
+					if($validator->fails()) {
+						$errors['description'] = true;
+					}
+					else {
+						$book->description 			= Request::get('description');
+						$updated['description'] 	= Request::get('description');
+					}
 				}
+
+
+				if ( Request::get('title') ) {
+					$errors['title'] = true;
+				}
+
+				// If trying to update the title
+
+				if(isset($errors['title'])) {
+
+					return Response::json(
+						array(
+							'metadata' => array(
+								'error' 	=> true,
+								'message' 	=> 'The title can not be updated'
+							)
+						),
+						403 // access denied
+					);
+				}
+				// If validation doesn't pass
+
+				if(isset($errors['description'])) {
+
+					return Response::json(
+						array(
+							'metadata' => array(
+								'error' 	=> true,
+								'message' 	=> 'The description too short'
+							)
+						),
+						400
+					);
+				}
+
+				// Else, we can update the book
+
 				else {
-					$book->description 			= Request::get('description');
-					$updated['description'] 	= Request::get('description');
+					$book->save();
+
+					$metadata = array(
+						'metadata' => array(
+							'error' 	=> false,
+							'message' 	=> 'Book updated'
+						)
+					);
+
+					return Response::json(
+						array_merge($updated,$metadata),
+						200
+					);
 				}
 			}
-
-			if ( Request::get('title') ) {
-				$errors['title'] = true;
-			}
-
-			// If trying to update the title
-
-			if(isset($errors['title'])) {
-
-				return Response::json(
-					array(
-						'metadata' => array(
-							'error' 	=> true,
-							'message' 	=> 'The title can not be updated'
-						)
-					),
-					403 // access denied
-				);
-			}
-
-			// If validation doesn't pass
-
-			if(isset($errors['description'])) {
-
-				return Response::json(
-					array(
-						'metadata' => array(
-							'error' 	=> true,
-							'message' 	=> 'The description too short'
-						)
-					),
-					204
-				);
-			}
-
-			// Else, we can update the book
-
 			else {
-				$book->save();
-
-				$metadata = array(
-					'metadata' => array(
-						'error' 	=> false,
-						'message' 	=> 'Book updated'
-					)
-				);
-
 				return Response::json(
-					array_merge($updated,$metadata),
-					200
+					array(
+						'metadata' => array(
+							'error' 	=> true,
+							'message' 	=> 'You\'re not the owner of this book'
+						)
+					),
+					403
 				);
 			}
 		}

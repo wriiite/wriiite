@@ -20,7 +20,7 @@
 				</li>
 			</ul>
 			<small class="text-muted" ng-hide="books.items.length">No books written yet</small>
-			<small class="text-muted" ng-hide="filteredBooks.length">The research returned no results</small>
+			<small class="text-muted" ng-hide="filteredBooks.length" ng-if='books.items.length'>The research returned no results</small>
 		</div>
 	</div>
 

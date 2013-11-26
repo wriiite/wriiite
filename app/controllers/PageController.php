@@ -88,11 +88,11 @@ class PageController extends \BaseController {
 				array(
 					'metadata'	=> array(
 						'error' 	=> true,
-						'message' 	=> 'The page creation failed'
+						'message' 	=> 'The page must be between 300 and 350 characters'
 					)
 					
 				),
-				404
+				400
 			);
 		}
 		else {
@@ -290,7 +290,7 @@ class PageController extends \BaseController {
 								'message' 	=> 'There\'s already a validated page for this book\'s page'
 							)
 						),
-						404
+						400
 					);
 				}
 				else {
@@ -316,7 +316,7 @@ class PageController extends \BaseController {
 							'message' 	=> 'You\'re not the owner of the book'
 						)
 					),
-					404
+					403
 				);
 			}
 
