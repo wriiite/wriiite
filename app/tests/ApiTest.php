@@ -116,7 +116,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/books', 
 			array('title' => 'My failing book title')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -124,7 +124,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/books', 
 			array('description' => 'My failing book is about a book that fails, because some title is missing')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -132,7 +132,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/books', 
 			array('title' => 'My short book', 'description' => 'This is too short')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -159,7 +159,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('PUT', '/api/v1/books/'.$id, 
 			array('description' => 'This is too short')
 		);
-		$this->assertTrue($response->getStatusCode() == 204);
+		$this->assertTrue($response->getStatusCode() == 400);
 
 		// read
 		$response = $this->call('GET', '/api/v1/books/'.$id);
@@ -481,7 +481,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/pages', 
 			array('content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -489,7 +489,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/pages', 
 			array('book_id' => '2')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -497,7 +497,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/pages', 
 			array('book_id' => '1', 'content' => 'This is too short')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
@@ -505,7 +505,7 @@ class ApiTest extends TestCase {
 		$response = $this->call('POST', '/api/v1/pages', 
 			array('book_id' => '100', 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
 		);
-		$this->assertTrue($response->getStatusCode() == 404);
+		$this->assertTrue($response->getStatusCode() == 400);
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
