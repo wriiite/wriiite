@@ -18,3 +18,21 @@
 .repeat-item.ng-enter.ng-enter-active {
   opacity:1;
 }
+
+.pace .pace-progress {
+  background: #29d;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  height: 2px;
+
+  -webkit-transition: width 0.3s;
+  -moz-transition: width 0.3s;
+  -o-transition: width 0.3s;
+  transition: width 0.3s;
+}
+
+.pace-inactive {
+  display: none;
+}

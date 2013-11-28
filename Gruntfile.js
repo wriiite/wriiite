@@ -29,7 +29,8 @@ module.exports = function(grunt) {
           'public/packages/angular/angular.js',
           'public/packages/angular-animate/angular-animate.js',
           'public/packages/angular-resource/angular-resource.js',
-          'public/packages/angular-route/angular-route.js'
+          'public/packages/angular-route/angular-route.js',
+          'public/packages/pace/pace.js'
         ], 
         dest: 'public/libs/', 
         filter: 'isFile'
