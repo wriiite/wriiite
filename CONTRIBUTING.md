@@ -23,7 +23,7 @@ $ php artisan serve
 ### contributing
 follow [laravel's coding guidelines](https://github.com/laravel/framework/blob/master/CONTRIBUTING.md) and use tabs.
 
-## frontend (using backbonejs)
+## frontend
 
 ### requirements
 #### node & npm
@@ -37,12 +37,11 @@ $ npm install -g bower
 
 ### installing the project
 cd to the root directory
-- run `npm install` to install all nodejs dependencies (essentially grunt stuffs)
-- run `bower install` to install all javascript dependencies (jquery, backbone...)
+run `npm install` to install all nodejs dependencies, this wil trigger bower and grunt
 
 ### test and code
 
 http://localhost:8000/#/ is the home directory
 
 ### contributing
-in front-end, we use 2 spaces instead of tabs (don't ask me why, i don't do the rules there)
+in front-end, we do not have (yet) any coding giudeline, we are lame and dirty
