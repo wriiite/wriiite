@@ -1,0 +1,27 @@
+{
+  "name": "wriiite",
+  "version": "0.0.1",
+  "description": "An Angularjs front-end for wriiite",
+  "main": "public/index.php",
+  "scripts": {
+    "test": "php phpunit.phar",
+    "start": "php artisan serve",
+    "preinstall": "grunt -version && echo bower && bower -v",
+    "postinstall": "bower install && grunt install"
+  },
+  "devDependencies": {
+    "bower": "1.2.*",
+    "grunt": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*"
+  },
+  "contributors": ["@gasp", "@jonathanWi"],
+  "bugs": {
+    "url" : "http://github.com/owner/project/issues"
+  },
+  "private": true,
+  "license": "BSD-2-Clause"
+}

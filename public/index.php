@@ -6,12 +6,10 @@
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  */
 
-
 if ($_SERVER[REQUEST_URI] == '/') {
 	require(__DIR__.'/default.html');
 	exit;
 }
-
 
 /*
 |--------------------------------------------------------------------------

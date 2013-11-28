@@ -3,4 +3,7 @@
 composer.phar
 composer.lock
 phpunit.phar
+/node_modules
+/public/packages
+/public/libs
 .DS_Store
