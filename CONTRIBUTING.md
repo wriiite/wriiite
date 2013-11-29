@@ -1,18 +1,28 @@
 # Contribution Guidelines
 
-For back-end, please use [laravel framework](http://laravel.com/)
-For front-end, please join the backbone branch or the angular branch.
+For back-end, please use [laravel framework](http://laravel.com/).
+
+For front-end, please use angular.
 
 ## backend
 
 use at least php5.4
 
 ### Installing laravel
-you can clone this repo and use [composer](http://laravel.com/docs/installation) sweetheart.
+you can clone this repo and use [composer](http://laravel.com/docs/installation).
+~~~
+$ git clone git@github.com:wriiite/wriiite.git
+$ cd wriiite
+$ wget http://getcomposer.org/download/1.0.0-alpha7/composer.phar
+$ php composer.phar install
+~~~
 
 ### testing
-use phpunit, lambchop
-
+use phpunit
+~~~
+$ wget https://phar.phpunit.de/phpunit.phar
+$ php phpunit.phar
+~~~
 ### local dev
 
 you can launch `artisan serve` to serve the backend on http://localhost:8000 , cupcake.
