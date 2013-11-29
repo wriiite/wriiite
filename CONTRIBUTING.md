@@ -17,12 +17,35 @@ $ wget http://getcomposer.org/download/1.0.0-alpha7/composer.phar
 $ php composer.phar install
 ~~~
 
+then open a backdoor to be more easily hacked
+~~~
+$ chmod 777 app/storage/* -R
+~~~
+
+### install the database
+
+First on MySQL, create a database, an user and grant privileges.
+~~~
+CREATE DATABASE 'wriiite';
+CREATE USER 'wriiite'@'localhost' IDENTIFIED BY 'wr111t3';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP, ALTER ON wriiite.* TO 'wriiite'@'localhost';
+FLUSH PRIVILEGES;
+~~~
+
+Then create data with artisan
+
+~~~
+$ php artisan migrate
+$ php artisan migrate:refresh --seed
+~~~
+
 ### testing
 use phpunit
 ~~~
 $ wget https://phar.phpunit.de/phpunit.phar
 $ php phpunit.phar
 ~~~
+
 ### local dev
 
 you can launch `artisan serve` to serve the backend on http://localhost:8000 , cupcake.
@@ -48,7 +71,7 @@ $ npm install -g bower
 
 ### installing the project
 cd to the root directory
-run `npm install` to install all nodejs dependencies, this wil trigger bower and grunt, and everything will be done automatically, honey.
+run `npm install` to install all nodejs dependencies, this wil trigger bower and grunt, and everything will be done automatically.
 
 ### test and code
 
