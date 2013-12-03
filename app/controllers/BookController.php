@@ -282,7 +282,8 @@ class BookController extends \BaseController {
 
 			if($book->user_id == Auth::user()->id)
 			{
-				if ( Request::get('description') ) {
+				/* To make PUT request, and get inputs from those request, you need to add a Input::get('_method') == 'PUT'*/
+				if ( Input::get('description') ) {
 
 					$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
 					if($validator->fails()) {
@@ -297,8 +298,8 @@ class BookController extends \BaseController {
 						);
 					}
 					else {
-						$book->description 			= Request::get('description');
-						$updated['description'] 	= Request::get('description');
+						$book->description 			= Input::get('description');
+						$updated['description'] 	= Input::get('description');
 					}
 				}
 				else {
