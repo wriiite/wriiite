@@ -74,7 +74,6 @@ class PageController extends \BaseController {
 	 */
 	public function store()
 	{
-
 		$rules = array(
 			'content' 		=> 'required|between:300,350',
 			'book_id' 		=> 'required|exists:books,id'
@@ -97,9 +96,9 @@ class PageController extends \BaseController {
 		}
 		else {
 
-			$book_id 			= Input::get('book_id');
+			$book 				= Book::find(Input::get('book_id'));
 			$content			= Input::get('content');
-			$parent 			= Page::where('book_id',$book_id)->where('status',1)->orderBy('id', 'desc')->first();
+			$parent 			= Page::where('book_id',$book->id)->where('status',1)->orderBy('id', 'desc')->first();
 
 			if($parent){
 				$parent_id 		= $parent->id;
@@ -111,11 +110,23 @@ class PageController extends \BaseController {
 				$parent_id 		= 0;
 				$parent_number	= 0;
 				$status 		= 1; //if there's no parent page, the new page is the first - auto validated - page of the book.
+				if($book->user_id != Auth::user()->id) {
+					return Response::json(
+						array(
+							'metadata'	=> array(
+								'error' 	=> true,
+								'message' 	=> 'You have to be the author of a book to write the first page.'
+							)
+							
+						),
+						403
+					);
+				}
 			}
 
 			$page 				= new Page;
 			$page->content 		= $content;
-			$page->book_id 		= $book_id;
+			$page->book_id 		= $book->id;
 			$page->parent_id	= $parent_id;
 			$page->number 		= $parent_number + 1;
 			$page->user_id		= Auth::user()->id;

@@ -509,7 +509,33 @@ class ApiTest extends TestCase {
 		$j = json_decode($response->getContent());
 		$this->assertTrue($j->metadata->error);
 
-		//MANQUE LA PARTIE UPDATE 
+		// create a new book 
+		$response = $this->call('POST', '/api/v1/books', 
+			array('title' => 'Empty Book', 'description' => 'This book will have no page at first, first we\'ll test if someone else than the author can write the missing first page, then we\'ll create the first page with the proper user')
+		);
+		$this->assertTrue($response->getStatusCode() == 201);
+		$j = json_decode($response->getContent());
+
+
+		//insert first page as the wrong user
+		$user = new User(array('id'=>2));
+		$this->be($user);
+
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => $j->id, 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
+		);
+		$this->assertTrue($response->getStatusCode() == 403);
+
+		//insert first page as the wrong user
+		$user = new User(array('id'=>1));
+		$this->be($user);
+
+		$response = $this->call('POST', '/api/v1/pages', 
+			array('book_id' => $j->id, 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
+		);
+		$j = json_decode($response->getContent());
+		$this->assertTrue($response->getStatusCode() == 201);
+		$this->assertTrue($j->status == 1);
 
 	}
 
