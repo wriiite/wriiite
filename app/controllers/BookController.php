@@ -143,7 +143,6 @@ class BookController extends \BaseController {
 			'description' 	=> 'required|min:30'
 		);
 
-
 		$validator = Validator::make(Input::all(), $rules);
 
 		if ($validator->fails()) {
@@ -160,7 +159,7 @@ class BookController extends \BaseController {
 
 		else {
 
-			$slug			= Str::slug(Request::get('title'));
+			$slug			= Str::slug(Input::get('title'));
 			$existSlug		= Book::where('slug',$slug)->get();
 
 			if(count($existSlug) > 0) {
@@ -176,9 +175,9 @@ class BookController extends \BaseController {
 			}
 			else {
 				$book 				= new Book;
-				$book->title 		= Request::get('title');
+				$book->title 		= Input::get('title');
 				$book->slug 		= $slug;
-				$book->description 	= Request::get('description');
+				$book->description 	= Input::get('description');
 				$book->user_id 		= Auth::user()->id;
 				$book->status 		= false;
 				$book->save();
