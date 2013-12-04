@@ -298,6 +298,20 @@ class BookController extends \BaseController {
 					else {
 						$book->description 			= Input::get('description');
 						$updated['description'] 	= Input::get('description');
+
+						$book->save();
+
+						$metadata = array(
+							'metadata' => array(
+								'error' 	=> false,
+								'message' 	=> 'Book updated'
+							)
+						);
+
+						return Response::json(
+							array_merge($updated,$metadata),
+							200
+						);
 					}
 				}
 				else {
@@ -309,21 +323,6 @@ class BookController extends \BaseController {
 							)
 						),
 						400
-					);
-				}
-				else {
-					$book->save();
-
-					$metadata = array(
-						'metadata' => array(
-							'error' 	=> false,
-							'message' 	=> 'Book updated'
-						)
-					);
-
-					return Response::json(
-						array_merge($updated,$metadata),
-						200
 					);
 				}
 			}
