@@ -157,7 +157,6 @@ class BookController extends \BaseController {
 				400
 			);
 		}
-
 		else {
 
 			$slug			= Str::slug(Request::get('title'));
@@ -313,22 +312,6 @@ class BookController extends \BaseController {
 						400
 					);
 				}
-
-				// If trying to update the title
-				if ( Request::get('title') ) {
-					return Response::json(
-						array(
-							'metadata' => array(
-								'error' 	=> true,
-								'message' 	=> 'The title can not be updated'
-							)
-						),
-						403 // access denied
-					);
-				}
-
-				// Else, we can update the book
-
 				else {
 					$book->save();
 
