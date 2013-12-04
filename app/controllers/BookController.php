@@ -156,7 +156,6 @@ class BookController extends \BaseController {
 				400
 			);
 		}
-
 		else {
 
 			$slug			= Str::slug(Input::get('title'));
@@ -281,7 +280,8 @@ class BookController extends \BaseController {
 
 			if($book->user_id == Auth::user()->id)
 			{
-				if ( Request::get('description') ) {
+				/* To make PUT request, and get inputs from those request, you need to add a Input::get('_method') == 'PUT'*/
+				if ( Input::get('description') ) {
 
 					$validator = Validator::make(Input::all(), array('description' => 'required|min:30'));
 					if($validator->fails()) {
@@ -296,8 +296,8 @@ class BookController extends \BaseController {
 						);
 					}
 					else {
-						$book->description 			= Request::get('description');
-						$updated['description'] 	= Request::get('description');
+						$book->description 			= Input::get('description');
+						$updated['description'] 	= Input::get('description');
 					}
 				}
 				else {
@@ -311,22 +311,6 @@ class BookController extends \BaseController {
 						400
 					);
 				}
-
-				// If trying to update the title
-				if ( Request::get('title') ) {
-					return Response::json(
-						array(
-							'metadata' => array(
-								'error' 	=> true,
-								'message' 	=> 'The title can not be updated'
-							)
-						),
-						403 // access denied
-					);
-				}
-
-				// Else, we can update the book
-
 				else {
 					$book->save();
 
