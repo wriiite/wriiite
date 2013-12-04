@@ -78,10 +78,21 @@ class UserController extends \BaseController {
 
 			$pages 		= Page::where('book_id', $book->id)->get();
 
+			if(!count($pages)) {
+				return Response::json(
+					array(
+						'metadata'	=> array(
+							'error' 	=> true,
+							'message' 	=> 'No pages found'
+						)
+					),
+					404
+				);
+			}
+
 			$users_id 	= [];
 
-			foreach($pages as $p)
-			{
+			foreach($pages as $p) {
 				$users_id[] = $p->user_id;
 			}
 
