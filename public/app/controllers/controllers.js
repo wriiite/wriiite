@@ -6,8 +6,7 @@ app.controller('AuthController', function($scope, $rootScope, $http, $location, 
 			$location.path("/user/" + $rootScope.main.user.id);
 		});
 	}
-  
-  
+
 	$scope.logoutUser = function() {
 		Auth.logout().success(function(data) {
 			$rootScope.main.user = {};
@@ -29,10 +28,70 @@ app.controller('AuthController', function($scope, $rootScope, $http, $location, 
 });
 
 
+app.controller('NewBookController', function ($scope, BooksFactory, $location, PagesFactory, $rootScope) {
+	init();
+	function init() {
+		if($rootScope.main.user) {
+
+			$scope.title = "Alice " + Math.floor(Math.random()*1000000);
+			$scope.description = "Alice in Wonderland is a bitch";
+			$scope.content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque faucibus aliquam nulla eget congue. Fusce egestas felis ac suscipit pharetra. Praesent feugiat at nisi non ullamcorper. Fusce iaculis quis lectus porta dictum. Nulla aliquam vitae sem et consequat. Suspendisse potenti. Vestibulum sit amet metus.";
+
+			console.log("I am logged as %o",  $rootScope.main.user);
+		}
+
+	}
+    // we will create a book and its first page
+	$scope.create = function() {
+
+		var postData = {
+			'title' : $scope.title,
+			'description' : $scope.description,
+			'content' : $scope.content
+		};
+
+		var createBook = function() {
+			BooksFactory.save(postData, 
+				function(response) {
+					console.log("book created");
+					postData.book_id = response.id;
+					createFirstPage(postData);
+				},
+				function(response) {
+					$scope.alert = {
+						message: response.data.metadata.message,
+						error: true
+					};
+					console.log($scope.alert);
+				}
+			);
+		}
+
+		var createFirstPage = function(postData) {
+			PagesFactory.save(postData, 
+				function(response) {
+					console.log('/book/'+postData.book_id);
+					$location.path('/book/'+postData.book_id);
+				},
+				function(response) {
+					$scope.alert = {
+						message: response.data.metadata.message,
+						error: true
+					};
+					console.log($scope.alert);
+				}
+			);
+		}
+
+		createBook();
+	}
+})
+
 app.controller('BookController', function ($scope, BooksFactory, PagesFactory, $routeParams, $rootScope) {
 
 	init();
 	function init() {
+
 		var bookID = ($routeParams.bookID) ? parseInt($routeParams.bookID) : 0;
 
 		if (bookID > 0) {

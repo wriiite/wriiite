@@ -16,9 +16,6 @@ var app = angular.module('bookApp', ['ngResource', 'ngAnimate', 'ngRoute', 'ui.b
         });
     }
     
-
-    
-
 });
 
 //This configures the routes and associates each route with a view and a controller
@@ -29,17 +26,23 @@ app.config(function ($routeProvider) {
                 controller  : 'BookController',
                 templateUrl : 'app/partials/books.html'
             })
+        .when('/book/new',
+            {
+                controller  : 'NewBookController',
+                templateUrl : 'app/partials/booknew.html'
+            }
+        )
         //Define a route that has a route parameter in it (:customerID)
         .when('/book/:bookID',
             {
                 controller  : 'BookController',
-                templateUrl : 'app/partials/bookInfo.html'
+                templateUrl : 'app/partials/bookinfo.html'
             })
         //Define a route that has a route parameter in it (:customerID)
         .when('/user/:userID',
             {
                 controller  : 'UserController',
-                templateUrl : 'app/partials/userInfo.html'
+                templateUrl : 'app/partials/userinfo.html'
             })
         .when('/users', 
             {
