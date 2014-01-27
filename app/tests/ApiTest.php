@@ -161,6 +161,12 @@ class ApiTest extends TestCase {
 		);
 		$this->assertTrue($response->getStatusCode() == 400);
 
+		// publish fail because there's no first page yet
+		$response = $this->call('PUT', '/api/v1/books/'.$id, 
+			array('publish' => 'true', '_method' => 'PUT')
+		);
+		$this->assertTrue($response->getStatusCode() == 400);
+
 		// read
 		$response = $this->call('GET', '/api/v1/books/'.$id);
 		$j = json_decode($response->getContent());
@@ -511,7 +517,7 @@ class ApiTest extends TestCase {
 
 		// create a new book 
 		$response = $this->call('POST', '/api/v1/books', 
-			array('title' => 'Empty Book', 'description' => 'This book will have no page at first, first we\'ll test if someone else than the author can write the missing first page, then we\'ll create the first page with the proper user')
+			array('title' => 'Empty Book', 'description' => 'This book will have no page at first, first we\'ll test if someone else than the author can write the missing first page, then we\'ll create the first page with the proper user. Finaly, we\'ll test the publish function once the page has been published')
 		);
 		$this->assertTrue($response->getStatusCode() == 201);
 		$j = json_decode($response->getContent());
@@ -526,16 +532,22 @@ class ApiTest extends TestCase {
 		);
 		$this->assertTrue($response->getStatusCode() == 403);
 
-		//insert first page as the wrong user
+		//insert first page as the right user
 		$user = new User(array('id'=>1));
 		$this->be($user);
 
 		$response = $this->call('POST', '/api/v1/pages', 
 			array('book_id' => $j->id, 'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at diam tempor, dignissim nunc placerat, euismod metus. Sed porttitor nulla vel felis congue luctus. Proin egestas nisi vitae tortor pulvinar vehicula. Suspendisse eleifend augue quis congue fringilla. Vestibulum pharetra urna sed nibh volutpat, vitae sed.')
 		);
-		$j = json_decode($response->getContent());
+		$k = json_decode($response->getContent());
 		$this->assertTrue($response->getStatusCode() == 201);
-		$this->assertTrue($j->status == 1);
+		$this->assertTrue($k->status == 1);
+
+		// publish succeed because there's no first page yet
+		$response = $this->call('PUT', '/api/v1/books/'.$j->id, 
+			array('publish' => 'true', '_method' => 'PUT')
+		);
+		$this->assertTrue($response->getStatusCode() == 200);
 
 	}
 

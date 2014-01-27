@@ -98,9 +98,9 @@ class PageController extends \BaseController {
 
 			$book 				= Book::find(Input::get('book_id'));
 			$content			= Input::get('content');
-			$parent 			= Page::where('book_id',$book->id)->where('status',1)->orderBy('id', 'desc')->first();
 
-			if($parent){
+			if($book->status == 1){
+				$parent 		= Page::where('book_id',$book->id)->where('status',1)->orderBy('id', 'desc')->first();
 				$parent_id 		= $parent->id;
 				$parent_number	= $parent->number;
 				$status			= 0; //Define the status of the created page

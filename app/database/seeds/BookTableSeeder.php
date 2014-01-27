@@ -11,7 +11,7 @@ class BookTableSeeder extends Seeder {
 			'title' => 'First Book',
 			'slug' => 'first-book',
 			'description' => 'This is the first book, alpha of litterature, a never ending book',
-			'status' => false
+			'status' => true
 		));
 
 		Book::create(array(
@@ -27,6 +27,14 @@ class BookTableSeeder extends Seeder {
 			'slug' => 'dramatis-personae',
 			'title' => 'Dramatis Personae',
 			'description' => 'This one is in english',
+			'status' => true
+		));
+
+		Book::create(array(
+			'user_id' => 3,
+			'slug' => 'livre-test-publish',
+			'title' => 'Livre Test Publish',
+			'description' => 'This book is used to test the publish function in the bookController',
 			'status' => false
 		));
 

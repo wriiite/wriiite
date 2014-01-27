@@ -15,7 +15,7 @@ class BookController extends \BaseController {
 	{
 		$max 	= intval(Input::get('max',10));
 		$offset = intval(Input::get('offset',0));
-		$books 	= Book::orderBy('created_at', 'desc')->take($max)->skip($offset)->get();
+		$books 	= Book::orderBy('created_at', 'desc')->where('status', 1)->take($max)->skip($offset)->get();
 
 		if($books && count($books) > 0) {
 			return Response::json(
@@ -178,7 +178,7 @@ class BookController extends \BaseController {
 				$book->slug 		= $slug;
 				$book->description 	= Input::get('description');
 				$book->user_id 		= Auth::user()->id;
-				$book->status 		= false;
+				$book->status 		= 0;
 				$book->save();
 
 				$stored = $book->toArray();
@@ -314,6 +314,45 @@ class BookController extends \BaseController {
 						);
 					}
 				}
+
+				elseif(Input::get('publish')) {
+
+					//Check if there's a published page => if so, we can publish the book
+					$publishedPage = Page::where('book_id', $book->id)->where('status',1)->first();
+
+					if($publishedPage) {
+
+						$book->status 		= 1;
+						$updated['status'] 	= 1;
+						$book->save();
+
+						$metadata = array(
+							'metadata' => array(
+								'error' 	=> false,
+								'message' 	=> 'Book updated'
+							)
+						);
+						return Response::json(
+							array_merge($updated,$metadata),
+							200
+						);
+					}
+
+					else {
+						return Response::json(
+							array(
+								'metadata' => array(
+									'error' 	=> true,
+									'message' 	=> 'Can\'t find the first published page of the book'
+								)
+							),
+							400
+						);
+					}
+
+				}
+
+
 				else {
 					return Response::json(
 						array(
