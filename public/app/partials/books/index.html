@@ -1,6 +1,6 @@
 <div class="row" ng-show='main.user'>
 	<div class="col-lg-12">
-		<a href="#book/new" class="btn btn-default">Add a new book</a>
+		<a href="#book/new" class="btn btn-default btn-primary">Add a new book</a>
 	</div>
 </div>
 
@@ -24,7 +24,9 @@
 		<hr />
 	</div>
 	<div class="col-lg-12">
-		<small class="text-muted" ng-hide="filteredBooks.length">The research returned no results</small>
+		<div class="bs-callout bs-callout-info" ng-hide="filteredBooks.length">
+			The research returned no results
+		</div>
 	</div>
 	
 
