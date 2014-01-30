@@ -24,35 +24,48 @@ app.config(function ($routeProvider) {
         .when('/',
             {
                 controller  : 'BookController',
-                templateUrl : 'app/partials/books.html'
+                templateUrl : 'app/partials/books/index.html'
             })
         .when('/book/new',
             {
                 controller  : 'NewBookController',
-                templateUrl : 'app/partials/booknew.html'
+                templateUrl : 'app/partials/books/create.html'
             }
         )
         //Define a route that has a route parameter in it (:customerID)
         .when('/book/:bookID',
             {
                 controller  : 'BookController',
-                templateUrl : 'app/partials/bookinfo.html'
+                templateUrl : 'app/partials/books/read.html',
+                resolve : {
+                    book : function(BooksFactory) {
+                        BooksFactory.get({id : $routeProvider.bookID})
+                            .$promise.then(
+                                function(error) { console.log(error)}
+                            )
+                    }
+                }
             })
         //Define a route that has a route parameter in it (:customerID)
         .when('/user/:userID',
             {
                 controller  : 'UserController',
-                templateUrl : 'app/partials/userinfo.html'
+                templateUrl : 'app/partials/users/read.html'
             })
         .when('/users', 
             {
                 controller  : 'UserController',
-                templateUrl : 'app/partials/users.html'
+                templateUrl : 'app/partials/users/index.html'
             })
         .when('/auth/login', 
             {
                 controller  : 'AuthController',
-                templateUrl : 'app/partials/login.html'
+                templateUrl : 'app/partials/auth/login.html'
             })
-        .otherwise({ redirectTo: '/' });
+        .when('/404',
+            {
+                controller  : 'errorController',
+                templateUrl : 'app/partials/errors/404.html'
+            })
+        .otherwise({ redirectTo: '/404' });
 });
