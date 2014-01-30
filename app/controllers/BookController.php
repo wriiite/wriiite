@@ -210,35 +210,100 @@ class BookController extends \BaseController {
 
 		if($book) {
 
-			$pages		= Page::where('book_id',$book->id)->get();
-			$pageArray 	= [];
+			if($book->status == 1){
 
-			foreach($pages as $p)
-			{
-				$pageArray[]		= array(
-					'id'			=> $p->id,
-					's'				=> $p->status,
-					'n'				=> $p->number,
-					'content'		=> $p->content,
-					'user'			=> array('username'=>$p->user->username,'id'=>$p->user->id)
-					);
+				$pages		= Page::where('book_id',$book->id)->get();
+				$pageArray 	= [];
+
+				foreach($pages as $p)
+				{
+					$pageArray[]		= array(
+						'id'			=> $p->id,
+						'status'		=> $p->status,
+						'number'		=> $p->number,
+						'content'		=> $p->content,
+						'user'			=> array('username'=>$p->user->username,'id'=>$p->user->id)
+						);
+				}
+
+				return Response::json(
+					array(
+						'metadata'	=> array(
+							'error' 		=> false
+						),
+						'title'			=> $book->title,
+						'slug'			=> $book->slug,
+						'description' 	=> $book->description,
+						'status'		=> $book->status,
+						'created_at'	=> $book->created_at,
+						'modified_at'	=> $book->modified_at,
+						'user'			=> array('id'=>$book->user->id,'username'=>$book->user->username),
+						'pages'			=> $pageArray
+					),
+					200
+				);
 			}
 
-			return Response::json(
-				array(
-					'metadata'	=> array(
-						'error' 		=> false
-					),
-					'title'			=> $book->title,
-					'slug'			=> $book->slug,
-					'description' 	=> $book->description,
-					'created_at'	=> $book->created_at,
-					'modified_at'	=> $book->modified_at,
-					'user'			=> array('id'=>$book->user->id,'username'=>$book->user->username),
-					'pages'			=> $pageArray
-				),
-				200
-			);
+			else {
+				if(Auth::check()) {
+					if(Auth::user()->id == $book->user_id) {
+						$pages		= Page::where('book_id',$book->id)->get();
+						$pageArray 	= [];
+
+						foreach($pages as $p)
+						{
+							$pageArray[]		= array(
+								'id'			=> $p->id,
+								'status'		=> $p->status,
+								'number'		=> $p->number,
+								'content'		=> $p->content,
+								'user'			=> array('username'=>$p->user->username,'id'=>$p->user->id)
+								);
+						}
+
+						return Response::json(
+							array(
+								'metadata'	=> array(
+									'error' 		=> false
+								),
+								'title'			=> $book->title,
+								'slug'			=> $book->slug,
+								'description' 	=> $book->description,
+								'status'		=> $book->status,
+								'created_at'	=> $book->created_at,
+								'modified_at'	=> $book->modified_at,
+								'user'			=> array('id'=>$book->user->id,'username'=>$book->user->username),
+								'pages'			=> $pageArray
+							),
+							200
+						);
+					}
+					else {
+
+						return Response::json(
+							array(
+								'metadata' => array(
+									'error' 	=> true,
+									'message' 	=> 'You must be the owner of the book to see it unpublished'
+								)
+							),
+							403
+						);
+
+					}
+				}
+				else {
+					return Response::json(
+						array(
+							'metadata' => array(
+								'error' 	=> true,
+								'message' 	=> 'You must be logged in to edit an unpublished book'
+							)
+						),
+						401
+					);
+				}
+			}
 		}
 		else {
 			return Response::json(
