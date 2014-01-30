@@ -33,6 +33,9 @@ app.factory('BooksFactory', function ($resource, baseURL) {
             params: {
                 rel : 'users'
             }
+        },
+        update : {
+            method : 'PUT'
         }
 
     });
