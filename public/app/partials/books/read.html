@@ -2,7 +2,9 @@
 
 	<div class="col-lg-12">
 		
-		<h2>{{book.title}} <a href="#/user/{{book.user.id}}" class="btn btn-xs btn-primary">Author : {{book.user.username}}</a></h2>
+		<h2>{{book.title}} <a href="#/user/{{book.user.id}}" class="btn btn-xs btn-primary">Author : {{book.user.username}}</a>
+		<span class="btn btn-xs btn-warning" ng-hide='book.status'>Unpublished book</span>
+		</h2>
 		<div class="well">
 			<h4>
 				Contributors 
@@ -49,8 +51,11 @@
 				<div class="new-page-form" ng-show='main.user'>
 					<form novalidate>
 						<div class="form-group">
-							<label for="nextPage">Write what's next</label>
-							<textarea placeholder="{{book.pages[book.pages.length -1].content}} ..." rows="4" class="form-control" ng-model='nextPage'></textarea>
+							<label for="nextPage">
+								<span ng-show='book.pages.length'>Write what's next</span>
+								<span ng-hide='book.pages.length'>Wriite the first page to make your book public</span>
+							</label>
+							<textarea placeholder="{{book.pages.length ? book.pages[book.pages.length -1].content : 'Wriiite your first book\'s page'}} ..." rows="4" class="form-control" ng-model='nextPage'></textarea>
 						</div>
 
 						<button class="btn btn-success" ng-click='newPage()'>Add a new page !</button>
